@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agrova — Mercan Resifi Tasarım Prototipi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --primary: #ff6f61;
+      --secondary: #006d77;
+      --accent: #83c5be;
+      --bg: #fff5f2;
+      --surface: #ffffff;
+      --text: #1a1a2e;
+      --text-muted: #6b6b7b;
+      --success: #2d9f6f;
+      --warning: #f0a500;
+      --error: #e63946;
+      --border: rgba(255, 111, 97, 0.15);
+      --grad-coral-teal: linear-gradient(120deg, #ff6f61 0%, #006d77 100%);
+      --grad-ocean: linear-gradient(145deg, #006d77 0%, #0d9488 50%, #14b8a6 100%);
+      --grad-stat: linear-gradient(135deg, #ff6f61 0%, #e85d52 100%);
+      --grad-stat-teal: linear-gradient(135deg, #006d77 0%, #0d9488 100%);
+      --radius: 16px;
+      --sidebar-w: 244px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    a { color: var(--secondary); }
+
+    .toggle-bar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      padding: 12px 20px;
+      background: var(--grad-coral-teal);
+      box-shadow: 0 4px 24px rgba(0, 109, 119, 0.25);
+    }
+    .toggle-bar__brand { color: #fff; font-weight: 700; font-size: 15px; letter-spacing: 0.02em; }
+    .toggle-seg { display: inline-flex; background: rgba(255,255,255,0.2); border-radius: 12px; padding: 4px; }
+    .toggle-seg button {
+      border: 0; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
+      padding: 8px 18px; border-radius: 10px; color: #fff; background: transparent;
+    }
+    .toggle-seg button[aria-pressed="true"] { background: #fff; color: var(--secondary); }
+    .hidden { display: none !important; }
+
+    /* --- Desktop layout --- */
+    .desktop-shell { min-height: calc(100vh - 56px); display: flex; }
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 12px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 8px 12px 20px; }
+    .sidebar__logo span { font-weight: 800; font-size: 18px; color: var(--text); }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 12px; border: 0; width: 100%;
+      text-align: left; font-family: inherit; font-size: 14px; cursor: pointer;
+      background: transparent; color: var(--text);
+    }
+    .nav-item i { width: 20px; height: 20px; color: var(--text-muted); }
+    .nav-item.is-active { background: rgba(255, 111, 97, 0.12); color: var(--text); }
+    .nav-item.is-active i { color: var(--primary); }
+    .main-panel { flex: 1; padding: 24px 28px; overflow: auto; }
+    .panel { display: none; }
+    .panel.is-visible { display: block; }
+    .panel h1 { font-size: 22px; font-weight: 700; margin: 0 0 6px; }
+    .panel__sub { color: var(--text-muted); font-size: 14px; margin: 0 0 20px; }
+
+    .grid-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+    @media (max-width: 1100px) { .grid-stats { grid-template-columns: repeat(2, 1fr); } }
+    .stat-tile {
+      background: var(--surface); border-radius: var(--radius); padding: 16px;
+      border: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    }
+    .stat-tile__icon {
+      width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    }
+    .stat-tile__icon.coral { background: var(--grad-stat); color: #fff; }
+    .stat-tile__icon.teal { background: var(--grad-stat-teal); color: #fff; }
+    .stat-tile__val { font-size: 24px; font-weight: 800; line-height: 1.1; }
+    .stat-tile__label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    .row-dash { display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; margin-bottom: 20px; }
+    @media (max-width: 1000px) { .row-dash { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px; box-shadow: 0 1px 3px rgba(26, 26, 46, 0.04);
+    }
+    .card__title { font-size: 14px; font-weight: 700; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+    .weather { display: flex; align-items: center; justify-content: space-between; }
+    .weather__place { font-weight: 700; font-size: 16px; }
+    .weather__temp { font-size: 32px; font-weight: 800; color: var(--secondary); }
+    .weather__desc { color: var(--text-muted); font-size: 13px; }
+    .feed { display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow: auto; }
+    .feed__row { display: flex; gap: 10px; font-size: 13px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .feed__time { color: var(--text-muted); min-width: 38px; font-variant-numeric: tabular-nums; }
+
+    .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 900px) { .kanban { grid-template-columns: 1fr; } }
+    .kan-col h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin: 0 0 8px; }
+    .k-card { padding: 12px; border-radius: 12px; background: #faf8f6; font-size: 13px; margin-bottom: 8px; border-left: 4px solid var(--primary); }
+    .k-card.devam { border-left-color: var(--secondary); }
+    .k-card.tamam { border-left-color: var(--success); }
+    .k-card strong { display: block; margin-bottom: 4px; }
+
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; align-items: center; }
+    .input, select, textarea {
+      font-family: inherit; font-size: 14px; border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 12px; background: #fff; color: var(--text);
+    }
+    .input:focus, select:focus, textarea:focus { outline: 2px solid rgba(0, 109, 119, 0.25); }
+    .btn { cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; border: 0; border-radius: 10px; padding: 8px 16px; }
+    .btn--primary { background: linear-gradient(135deg, #ff6f61, #e85a4d); color: #fff; }
+    .btn--secondary { background: var(--secondary); color: #fff; }
+    .btn--ghost { background: rgba(0, 109, 119, 0.08); color: var(--secondary); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    tr:hover td { background: rgba(255, 111, 97, 0.04); }
+
+    .chip { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .chip--pri-1 { background: rgba(255, 111, 97, 0.2); color: #c73d32; }
+    .chip--pri-2 { background: rgba(255, 111, 97, 0.12); color: #8b2e26; }
+    .chip--pri-3 { background: rgba(0, 109, 119, 0.12); color: var(--secondary); }
+    .chip--st-acik { background: rgba(0, 109, 119, 0.15); color: #004a52; }
+    .chip--st-basladi { background: rgba(240, 165, 0, 0.2); color: #a66f00; }
+    .chip--st-tamam { background: rgba(45, 159, 111, 0.15); color: #1d6b4a; }
+    .chip--sev-yuksek { background: rgba(230, 57, 70, 0.15); color: #9e202e; }
+    .chip--sev-orta { background: rgba(240, 165, 0, 0.2); color: #8a5a00; }
+    .chip--sev-dusuk { background: rgba(0, 109, 119, 0.12); color: var(--secondary); }
+
+    .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .field-card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+    .field-card__map {
+      height: 100px; background: var(--grad-ocean); position: relative;
+      display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.85); font-size: 12px; font-weight: 600;
+    }
+    .field-card__body { padding: 12px; }
+    .field-card__body h4 { margin: 0 0 6px; font-size: 15px; }
+    .field-card__meta { font-size: 12px; color: var(--text-muted); }
+    .issue-row {
+      display: flex; align-items: center; justify-content: space-between; padding: 12px 0;
+      border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap;
+    }
+    .issue-row__main { font-size: 14px; }
+    .issue-row__sub { font-size: 12px; color: var(--text-muted); }
+
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .tm-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; display: flex; gap: 12px; align-items: center; }
+    .tm-av { width: 44px; height: 44px; border-radius: 12px; background: var(--grad-stat-teal); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+    .tm-meta { font-size: 12px; color: var(--text-muted); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; vertical-align: middle; }
+    .status-dot--on { background: var(--success); }
+    .status-dot--off { background: #ccc; }
+
+    .eq-cat { margin-bottom: 20px; }
+    .eq-cat h3 { font-size: 14px; color: var(--secondary); margin: 0 0 8px; }
+    .eq-list { list-style: none; margin: 0; padding: 0; }
+    .eq-list li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; display: flex; justify-content: space-between; }
+
+    .form-stack { max-width: 480px; display: flex; flex-direction: column; gap: 14px; }
+    .form-row label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+    .form-row input, .form-row select, .form-row textarea { width: 100%; }
+
+    /* --- Mobile shell --- */
+    .mobile-wrap { min-height: calc(100vh - 56px); display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px 40px; }
+    .phone {
+      max-width: 390px; width: 100%;
+      background: #1a1a2e; border-radius: 36px; padding: 10px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.2), 0 0 0 3px #83c5be, 0 0 0 6px #1a1a2e;
+    }
+    .phone__notch {
+      max-width: 120px; height: 28px; background: #1a1a2e; border-radius: 0 0 16px 16px;
+      margin: -10px auto 0; position: relative; z-index: 2;
+    }
+    .phone__screen { background: var(--bg); border-radius: 28px; overflow: hidden; min-height: 640px; display: flex; flex-direction: column; }
+    .m-header {
+      padding: 14px 16px; background: var(--grad-coral-teal); color: #fff; font-weight: 700; font-size: 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .m-content { flex: 1; overflow: auto; padding: 12px; padding-bottom: 88px; }
+    .m-tabs {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 72px;
+      background: var(--surface); border-top: 1px solid var(--border);
+      display: flex; align-items: stretch; padding: 6px 4px; gap: 2px;
+    }
+    .m-tabs button {
+      flex: 1; border: 0; background: transparent; font-size: 10px; color: var(--text-muted);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      cursor: pointer; font-family: inherit; font-weight: 600;
+    }
+    .m-tabs button[aria-selected="true"] { color: var(--secondary); }
+    .m-tabs button i { width: 22px; height: 22px; }
+    .phone__inner { position: relative; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+    .m-task { border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 10px; background: var(--surface); cursor: pointer; }
+    .m-task h4 { margin: 0 0 4px; font-size: 14px; }
+    .m-task p { margin: 0; font-size: 12px; color: var(--text-muted); }
+    .m-pills { display: flex; gap: 8px; margin-top: 10px; }
+    .m-pill { flex: 1; height: 72px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 0; cursor: pointer; font-family: inherit; }
+    .m-pill--start { background: linear-gradient(135deg, #ff6f61, #e85a4d); color: #fff; }
+    .m-pill--done { background: var(--secondary); color: #fff; }
+
+    .m-section h3 { font-size: 12px; color: var(--text-muted); margin: 16px 0 8px; }
+    .m-past { font-size: 13px; border-left: 3px solid var(--accent); padding-left: 10px; margin-bottom: 8px; }
+
+    .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+    .cat-btn { padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #fff; font-size: 12px; cursor: pointer; text-align: center; font-family: inherit; }
+    .cat-btn.is-selected { border-color: var(--primary); background: rgba(255, 111, 97, 0.1); color: var(--text); }
+
+    .m-profile { text-align: center; }
+    .m-profile__av { width: 72px; height: 72px; border-radius: 20px; margin: 8px auto; background: var(--grad-stat-teal); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; }
+    .m-rows { text-align: left; margin-top: 16px; }
+    .m-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .m-row span { color: var(--text-muted); }
+
+    .detail-overlay {
+      position: fixed; inset: 0; background: rgba(26, 26, 46, 0.45); z-index: 200;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .detail-overlay.is-open { display: flex; }
+    .detail-sheet {
+      background: var(--surface); width: 100%; max-width: 390px; max-height: 70vh; border-radius: 20px 20px 0 0; padding: 20px; overflow: auto;
+    }
+    .detail-sheet h3 { margin: 0 0 8px; }
+    .detail-close { position: absolute; right: 16px; top: 12px; border: 0; background: transparent; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="toggle-bar">
+    <span class="toggle-bar__brand">Agrova</span>
+    <div class="toggle-seg" role="group" aria-label="Görünüm seç">
+      <button type="button" id="btn-desktop" aria-pressed="true">Masaüstü / Sahip Görünümü</button>
+      <button type="button" id="btn-mobile" aria-pressed="false">Mobil / İşçi Görünümü</button>
+    </div>
+  </div>
+
+  <div id="view-desktop">
+    <div class="desktop-shell">
+      <aside class="sidebar" aria-label="Ana menü">
+        <div class="sidebar__logo">
+          <i data-lucide="leaf"></i>
+          <span>Agrova</span>
+        </div>
+        <button type="button" class="nav-item is-active" data-panel="bugun" role="tab" aria-selected="true">
+          <i data-lucide="layout-dashboard"></i> Bugün (Özet)
+        </button>
+        <button type="button" class="nav-item" data-panel="gorevler" role="tab" aria-selected="false">
+          <i data-lucide="list-checks"></i> Görevler
+        </button>
+        <button type="button" class="nav-item" data-panel="tarlalar" role="tab" aria-selected="false">
+          <i data-lucide="map-pinned"></i> Tarlalar
+        </button>
+        <button type="button" class="nav-item" data-panel="sorunlar" role="tab" aria-selected="false">
+          <i data-lucide="alert-triangle"></i> Sorunlar
+        </button>
+        <button type="button" class="nav-item" data-panel="ekip" role="tab" aria-selected="false">
+          <i data-lucide="users"></i> Ekip
+        </button>
+        <button type="button" class="nav-item" data-panel="ekipman" role="tab" aria-selected="false">
+          <i data-lucide="tractor"></i> Ekipman
+        </button>
+        <button type="button" class="nav-item" data-panel="ayarlar" role="tab" aria-selected="false">
+          <i data-lucide="settings"></i> Ayarlar
+        </button>
+      </aside>
+
+      <main class="main-panel">
+        <section class="panel is-visible" id="panel-bugun" data-panel="bugun" role="tabpanel">
+          <h1>Bugün</h1>
+          <p class="panel__sub">Günlük operasyon özeti ve Kanban</p>
+          <div class="grid-stats">
+            <div class="stat-tile">
+              <div>
+                <div class="stat-tile__val">47</div>
+                <div class="stat-tile__label">Açık görev</div>
+              </div>
+              <div class="stat-tile__icon coral"><i data-lucide="list-checks"></i></div>
+            </div>
+            <div class="stat-tile">
+              <div>
+                <div class="stat-tile__val">12</div>
+                <div class="stat-tile__label">Aktif arazi</div>
+              </div>
+              <div class="stat-tile__icon teal"><i data-lucide="map-pinned"></i></div>
+            </div>
+            <div class="stat-tile">
+              <div>
+                <div class="stat-tile__val">8</div>
+                <div class="stat-tile__label">Çevrimiçi işçi</div>
+              </div>
+              <div class="stat-tile__icon coral"><i data-lucide="user-check"></i></div>
+            </div>
+            <div class="stat-tile">
+              <div>
+                <div class="stat-tile__val">3</div>
+                <div class="stat-tile__label">Açık sorun</div>
+              </div>
+              <div class="stat-tile__icon teal"><i data-lucide="alert-octagon"></i></div>
+            </div>
+          </div>
+          <div class="row-dash">
+            <div class="card">
+              <h2 class="card__title"><i data-lucide="cloud-sun"></i> Hava</h2>
+              <div class="weather">
+                <div>
+                  <div class="weather__place">İstanbul</div>
+                  <div class="weather__desc">Parçalı bulutlu, hafif rüzgâr</div>
+                </div>
+                <div class="weather__temp">22°C</div>
+              </div>
+            </div>
+            <div class="card">
+              <h2 class="card__title"><i data-lucide="activity"></i> Son aktiviteler</h2>
+              <div class="feed">
+                <div class="feed__row"><span class="feed__time">08:10</span> Mehmet Yılmaz, Elma Bahçesi A3’te Budama’yı tamamladı.</div>
+                <div class="feed__row"><span class="feed__time">08:45</span> Ayşe Kaya, Hasat planını güncelledi.</div>
+                <div class="feed__row"><span class="feed__time">09:20</span> Hüseyin Demir, Sulama ekipmanı kontrolü başlattı.</div>
+                <div class="feed__row"><span class="feed__time">10:00</span> Ali Öztürk, Kiraz Tarlası B1 için İlaçlama girdi.</div>
+              </div>
+            </div>
+          </div>
+          <div class="kanban">
+            <div class="kan-col">
+              <h3>Yapılacak</h3>
+              <div class="k-card">
+                <strong>Gübreleme</strong>
+                Armut Bahçesi C2 — Fatma Çelik
+              </div>
+              <div class="k-card">
+                <strong>Ot Biçme</strong>
+                Kayısı Tarlası E1 — Hüseyin Demir
+              </div>
+            </div>
+            <div class="kan-col">
+              <h3>Devam</h3>
+              <div class="k-card devam">
+                <strong>İlaçlama</strong>
+                Kiraz Tarlası B1 — Ali Öztürk
+              </div>
+              <div class="k-card devam">
+                <strong>Sulama</strong>
+                Şeftali Alanı D4 — Ayşe Kaya
+              </div>
+            </div>
+            <div class="kan-col">
+              <h3>Tamam</h3>
+              <div class="k-card tamam">
+                <strong>Budama</strong>
+                Elma Bahçesi A3 — Mehmet Yılmaz
+              </div>
+              <div class="k-card tamam">
+                <strong>Hasat (kısmi)</strong>
+                Kayısı Tarlası E1 — Ekip
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-gorevler" data-panel="gorevler" role="tabpanel" hidden>
+          <h1>Görevler</h1>
+          <p class="panel__sub">Filtrele ve tüm operasyon satırlarını gör</p>
+          <div class="filter-bar">
+            <input class="input" type="search" placeholder="Ara: görev, alan, kişi…" id="gorev-search" style="min-width:200px" />
+            <select class="input" id="gorev-priority" aria-label="Öncelik">
+              <option value="">Tüm öncelikler</option>
+              <option>Yüksek</option>
+              <option>Orta</option>
+              <option>Düşük</option>
+            </select>
+            <select class="input" id="gorev-status" aria-label="Durum">
+              <option value="">Tüm durumlar</option>
+              <option>Açık</option>
+              <option>Başladı</option>
+              <option>Tamam</option>
+            </select>
+            <button type="button" class="btn btn--primary">Yeni görev</button>
+          </div>
+          <div class="card" style="padding:0; overflow:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Görev</th>
+                  <th>Alan</th>
+                  <th>Atanan</th>
+                  <th>Öncelik</th>
+                  <th>Durum</th>
+                  <th>Bitiş</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Budama</td><td>Elma Bahçesi A3</td><td>Mehmet Yılmaz</td><td><span class="chip chip--pri-1">Yüksek</span></td><td><span class="chip chip--st-tamam">Tamam</span></td><td>23.04.2026</td></tr>
+                <tr><td>İlaçlama</td><td>Kiraz Tarlası B1</td><td>Ali Öztürk</td><td><span class="chip chip--pri-1">Yüksek</span></td><td><span class="chip chip--st-basladi">Başladı</span></td><td>24.04.2026</td></tr>
+                <tr><td>Sulama</td><td>Şeftali Alanı D4</td><td>Ayşe Kaya</td><td><span class="chip chip--pri-2">Orta</span></td><td><span class="chip chip--st-basladi">Başladı</span></td><td>24.04.2026</td></tr>
+                <tr><td>Gübreleme</td><td>Armut Bahçesi C2</td><td>Fatma Çelik</td><td><span class="chip chip--pri-2">Orta</span></td><td><span class="chip chip--st-acik">Açık</span></td><td>25.04.2026</td></tr>
+                <tr><td>Hasat</td><td>Kayısı Tarlası E1</td><td>Hüseyin Demir</td><td><span class="chip chip--pri-1">Yüksek</span></td><td><span class="chip chip--st-acik">Açık</span></td><td>26.04.2026</td></tr>
+                <tr><td>Ot Biçme</td><td>Kayısı Tarlası E1</td><td>Hüseyin Demir</td><td><span class="chip chip--pri-3">Düşük</span></td><td><span class="chip chip--st-acik">Açık</span></td><td>28.04.2026</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-tarlalar" data-panel="tarlalar" role="tabpanel" hidden>
+          <h1>Tarlalar</h1>
+          <p class="panel__sub">Arazi kartları ve harita önizlemeleri</p>
+          <div class="field-grid">
+            <div class="field-card">
+              <div class="field-card__map">Harita önizleme</div>
+              <div class="field-card__body">
+                <h4>Elma Bahçesi A3</h4>
+                <div class="field-card__meta">2,4 ha · Meyve · Ağır kill</div>
+              </div>
+            </div>
+            <div class="field-card">
+              <div class="field-card__map">Harita önizleme</div>
+              <div class="field-card__body">
+                <h4>Kiraz Tarlası B1</h4>
+                <div class="field-card__meta">3,1 ha · Meyve · Deniz havası</div>
+              </div>
+            </div>
+            <div class="field-card">
+              <div class="field-card__map">Harita önizleme</div>
+              <div class="field-card__body">
+                <h4>Armut Bahçesi C2</h4>
+                <div class="field-card__meta">1,8 ha · Meyve · Tınlı toprak</div>
+              </div>
+            </div>
+            <div class="field-card">
+              <div class="field-card__map">Harita önizleme</div>
+              <div class="field-card__body">
+                <h4>Şeftali Alanı D4</h4>
+                <div class="field-card__meta">4,0 ha · Meyve · Damlama</div>
+              </div>
+            </div>
+            <div class="field-card">
+              <div class="field-card__map">Harita önizleme</div>
+              <div class="field-card__body">
+                <h4>Kayısı Tarlası E1</h4>
+                <div class="field-card__meta">2,9 ha · Meyve · Güney yamaç</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-sorunlar" data-panel="sorunlar" role="tabpanel" hidden>
+          <h1>Sorunlar</h1>
+          <p class="panel__sub">Açık kayıtlar ve önem derecesi</p>
+          <div class="card">
+            <div class="issue-row">
+              <div>
+                <div class="issue-row__main">Damlama hattı sızıntısı</div>
+                <div class="issue-row__sub">Şeftali Alanı D4 · Ayşe Kaya</div>
+              </div>
+              <span class="chip chip--sev-yuksek">Yüksek</span>
+            </div>
+            <div class="issue-row">
+              <div>
+                <div class="issue-row__main">Böcek izlenimi (ağaçkakan)</div>
+                <div class="issue-row__sub">Kiraz Tarlası B1 · Ali Öztürk</div>
+              </div>
+              <span class="chip chip--sev-orta">Orta</span>
+            </div>
+            <div class="issue-row">
+              <div>
+                <div class="issue-row__main">Traktör yağ değişimi gecikti</div>
+                <div class="issue-row__sub">Depo · Mehmet Yılmaz</div>
+              </div>
+              <span class="chip chip--sev-dusuk">Düşük</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-ekip" data-panel="ekip" role="tabpanel" hidden>
+          <h1>Ekip</h1>
+          <p class="panel__sub">Saha ekibi ve çevrimiçi durum</p>
+          <div class="team-grid">
+            <div class="tm-card">
+              <div class="tm-av">MY</div>
+              <div>
+                <strong>Mehmet Yılmaz</strong>
+                <div class="tm-meta"><span class="status-dot status-dot--on"></span>Çevrimiçi · Saha sorumlusu</div>
+              </div>
+            </div>
+            <div class="tm-card">
+              <div class="tm-av">AK</div>
+              <div>
+                <strong>Ayşe Kaya</strong>
+                <div class="tm-meta"><span class="status-dot status-dot--on"></span>Çevrimiçi · Operasyon</div>
+              </div>
+            </div>
+            <div class="tm-card">
+              <div class="tm-av">HD</div>
+              <div>
+                <strong>Hüseyin Demir</strong>
+                <div class="tm-meta"><span class="status-dot status-dot--on"></span>Çevrimiçi · Saha</div>
+              </div>
+            </div>
+            <div class="tm-card">
+              <div class="tm-av">FÇ</div>
+              <div>
+                <strong>Fatma Çelik</strong>
+                <div class="tm-meta"><span class="status-dot status-dot--on"></span>Çevrimiçi · Saha</div>
+              </div>
+            </div>
+            <div class="tm-card">
+              <div class="tm-av">AÖ</div>
+              <div>
+                <strong>Ali Öztürk</strong>
+                <div class="tm-meta"><span class="status-dot status-dot--off"></span>Çevrimdışı · Son: 1 saat</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-ekipman" data-panel="ekipman" role="tabpanel" hidden>
+          <h1>Ekipman</h1>
+          <p class="panel__sub">Kategorilere göre saha ekipmanı</p>
+          <div class="eq-cat">
+            <h3>Traktör ve sürme</h3>
+            <ul class="eq-list">
+              <li><span>John Deere 5075E</span><span class="tm-meta">Hazır</span></li>
+              <li><span>Rotatiller</span><span class="tm-meta">Bakımda</span></li>
+            </ul>
+          </div>
+          <div class="eq-cat">
+            <h3>İlaçlama ve sulama</h3>
+            <ul class="eq-list">
+              <li><span>Sırt pülverizatör</span><span class="tm-meta">Sahada</span></li>
+              <li><span>Damlama test kiti</span><span class="tm-meta">Depo</span></li>
+            </ul>
+          </div>
+          <div class="eq-cat">
+            <h3>Hasat ve taşıma</h3>
+            <ul class="eq-list">
+              <li><span>Makas seti (6)</span><span class="tm-meta">Depo</span></li>
+              <li><span>Soğuk zincir kasa (12)</span><span class="tm-meta">Hazır</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-ayarlar" data-panel="ayarlar" role="tabpanel" hidden>
+          <h1>Ayarlar</h1>
+          <p class="panel__sub">Operasyon tercihleri</p>
+          <div class="form-stack">
+            <div class="form-row">
+              <label for="op-name">İşletme adı</label>
+              <input id="op-name" class="input" value="Yıldız Çiftliği" />
+            </div>
+            <div class="form-row">
+              <label for="op-unit">Alan birimi</label>
+              <select id="op-unit" class="input">
+                <option selected>Hektar (ha)</option>
+                <option>Decar (dönüm)</option>
+                <option>Metrekare (m²)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="op-lang">Dil</label>
+              <select id="op-lang" class="input">
+                <option selected>Türkçe</option>
+                <option>English</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="op-note">Günlük not (şablona ekle)</label>
+              <textarea id="op-note" class="input" rows="3" placeholder="Bugünkü ekip toplantısı: sulama 14:00’de.">Bugünkü ekip toplantısı: sulama 14:00’de.</textarea>
+            </div>
+            <button type="button" class="btn btn--primary" id="btn-save-settings">Kaydet</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="view-mobile" class="hidden">
+    <div class="mobile-wrap">
+      <div class="phone" aria-label="Mobil cihaz önizleme">
+        <div class="phone__notch" aria-hidden="true"></div>
+        <div class="phone__screen">
+          <div class="phone__inner" style="position:relative">
+            <header class="m-header" id="m-header-title">
+              <i data-lucide="menu"></i>
+              <span id="m-title">Görevler</span>
+              <i data-lucide="bell"></i>
+            </header>
+            <div class="m-content" id="m-panels">
+              <div class="m-page" data-mtab="gorev" id="m-page-gorev">
+                <div class="m-task" data-task="1" role="button" tabindex="0">
+                  <h4>İlaçlama</h4>
+                  <p>Kiraz Tarlası B1 · Bugün 11:00</p>
+                  <div class="m-pills">
+                    <button type="button" class="m-pill m-pill--start" data-start="1">İşe Başla</button>
+                    <button type="button" class="m-pill m-pill--done" data-done="1">Tamamla</button>
+                  </div>
+                </div>
+                <div class="m-task" data-task="2" role="button" tabindex="0">
+                  <h4>Sulama</h4>
+                  <p>Şeftali Alanı D4 · Bugün 12:30</p>
+                  <div class="m-pills">
+                    <button type="button" class="m-pill m-pill--start" data-start="2">İşe Başla</button>
+                    <button type="button" class="m-pill m-pill--done" data-done="2">Tamamla</button>
+                  </div>
+                </div>
+                <div class="m-task" data-task="3" role="button" tabindex="0">
+                  <h4>Gübreleme</h4>
+                  <p>Armut Bahçesi C2 · Yarın 09:00</p>
+                  <div class="m-pills">
+                    <button type="button" class="m-pill m-pill--start" data-start="3">İşe Başla</button>
+                    <button type="button" class="m-pill m-pill--done" data-done="3">Tamamla</button>
+                  </div>
+                </div>
+                <div class="m-task" data-task="4" role="button" tabindex="0">
+                  <h4>Hasat</h4>
+                  <p>Kayısı Tarlası E1 · 25.04.2026</p>
+                  <div class="m-pills">
+                    <button type="button" class="m-pill m-pill--start" data-start="4">İşe Başla</button>
+                    <button type="button" class="m-pill m-pill--done" data-done="4">Tamamla</button>
+                  </div>
+                </div>
+                <div class="m-task" data-task="5" role="button" tabindex="0">
+                  <h4>Ot Biçme</h4>
+                  <p>Kayısı Tarlası E1 · 28.04.2026</p>
+                  <div class="m-pills">
+                    <button type="button" class="m-pill m-pill--start" data-start="5">İşe Başla</button>
+                    <button type="button" class="m-pill m-pill--done" data-done="5">Tamamla</button>
+                  </div>
+                </div>
+              </div>
+              <div class="m-page hidden" data-mtab="gecmis" id="m-page-gecmis">
+                <div class="m-section">
+                  <h3>23 Nisan 2026</h3>
+                  <div class="m-past">Budama — Elma Bahçesi A3 — Mehmet Yılmaz (Tamamlandı)</div>
+                  <div class="m-past">Kontrol turu — Kiraz Tarlası B1 — Ekip (Tamamlandı)</div>
+                </div>
+                <div class="m-section">
+                  <h3>22 Nisan 2026</h3>
+                  <div class="m-past">Gübre stok sayımı — Depo — Fatma Çelik (Tamamlandı)</div>
+                  <div class="m-past">Filtre temizliği — Sulama — Ayşe Kaya (Tamamlandı)</div>
+                </div>
+              </div>
+              <div class="m-page hidden" data-mtab="sorun" id="m-page-sorun">
+                <p style="font-size:13px;color:var(--text-muted);margin:0 0 10px">Kategori seç, kısaca açıkla, gönder.</p>
+                <div class="cat-grid" id="cat-grid" role="group" aria-label="Sorun kategorisi">
+                  <button type="button" class="cat-btn" data-cat="Sulama">Sulama</button>
+                  <button type="button" class="cat-btn" data-cat="Böcek">Böcek / hastalık</button>
+                  <button type="button" class="cat-btn" data-cat="Ekipman">Ekipman</button>
+                  <button type="button" class="cat-btn" data-cat="Diğer">Diğer</button>
+                </div>
+                <label for="sorun-text" style="font-size:12px;font-weight:600;color:var(--text-muted)">Açıklama</label>
+                <textarea id="sorun-text" class="input" style="width:100%;min-height:100px;margin-top:6px" rows="4" placeholder="Örn. D3 hattında düşük basınç…"></textarea>
+                <button type="button" class="btn btn--primary" style="width:100%;margin-top:12px" id="btn-sorun-submit">Sorunu bildir</button>
+                <p id="sorun-feedback" style="font-size:12px;color:var(--success);margin-top:8px;min-height:1.2em" role="status"></p>
+              </div>
+              <div class="m-page hidden" data-mtab="profil" id="m-page-profil">
+                <div class="m-profile">
+                  <div class="m-profile__av">MY</div>
+                  <div style="font-weight:700">Mehmet Yılmaz</div>
+                  <div style="font-size:13px;color:var(--text-muted)">Saha işçisi</div>
+                </div>
+                <div class="m-rows">
+                  <div class="m-row"><span>Telefon</span> +90 5xx xxx xx xx</div>
+                  <div class="m-row"><span>Vardiya</span> 08:00 – 17:00</div>
+                  <div class="m-row"><span>Son görev</span> Elma Bahçesi A3</div>
+                </div>
+                <button type="button" class="btn btn--secondary" style="width:100%;margin-top:12px">Çıkış yap</button>
+              </div>
+            </div>
+            <nav class="m-tabs" id="m-tabs" aria-label="Alt menü" style="position:absolute">
+              <button type="button" data-mtab="gorev" aria-selected="true"><i data-lucide="list-checks"></i>Görevler</button>
+              <button type="button" data-mtab="gecmis" aria-selected="false"><i data-lucide="history"></i>Geçmiş</button>
+              <button type="button" data-mtab="sorun" aria-selected="false"><i data-lucide="alert-circle"></i>Sorun</button>
+              <button type="button" data-mtab="profil" aria-selected="false"><i data-lucide="user"></i>Profil</button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-overlay" id="task-detail" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="detail-sheet" style="position:relative">
+      <button type="button" class="detail-close" id="detail-close" aria-label="Kapat"><i data-lucide="x"></i></button>
+      <h3 id="detail-title">Görev</h3>
+      <p id="detail-body" style="color:var(--text-muted);font-size:14px;margin:0 0 12px">Alan ve saat</p>
+      <div class="m-pills">
+        <button type="button" class="m-pill m-pill--start" id="detail-start">İşe Başla</button>
+        <button type="button" class="m-pill m-pill--done" id="detail-done">Tamamla</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const TASKS = {
+        1: { title: "İlaçlama", place: "Kiraz Tarlası B1", time: "Bugün 11:00" },
+        2: { title: "Sulama", place: "Şeftali Alanı D4", time: "Bugün 12:30" },
+        3: { title: "Gübreleme", place: "Armut Bahçesi C2", time: "Yarın 09:00" },
+        4: { title: "Hasat", place: "Kayısı Tarlası E1", time: "25.04.2026" },
+        5: { title: "Ot Biçme", place: "Kayısı Tarlası E1", time: "28.04.2026" }
+      };
+
+      function initIcons() {
+        if (typeof lucide !== "undefined" && lucide.createIcons) {
+          lucide.createIcons();
+        }
+      }
+      initIcons();
+
+      const btnDesktop = document.getElementById("btn-desktop");
+      const btnMobile = document.getElementById("btn-mobile");
+      const viewDesktop = document.getElementById("view-desktop");
+      const viewMobile = document.getElementById("view-mobile");
+
+      function setView(isMobile) {
+        btnDesktop.setAttribute("aria-pressed", String(!isMobile));
+        btnMobile.setAttribute("aria-pressed", String(isMobile));
+        viewDesktop.classList.toggle("hidden", isMobile);
+        viewMobile.classList.toggle("hidden", !isMobile);
+        if (isMobile) {
+          setTimeout(initIcons, 0);
+        } else {
+          setTimeout(initIcons, 0);
+        }
+      }
+      btnDesktop.addEventListener("click", function () { setView(false); });
+      btnMobile.addEventListener("click", function () { setView(true); });
+
+      const navItems = document.querySelectorAll(".nav-item[data-panel]");
+      const panels = document.querySelectorAll(".main-panel .panel");
+      function showPanel(id) {
+        navItems.forEach(function (b) {
+          const on = b.getAttribute("data-panel") === id;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        panels.forEach(function (p) {
+          const on = p.getAttribute("data-panel") === id;
+          p.classList.toggle("is-visible", on);
+          p.toggleAttribute("hidden", !on);
+        });
+        setTimeout(initIcons, 0);
+      }
+      navItems.forEach(function (b) {
+        b.addEventListener("click", function () { showPanel(b.getAttribute("data-panel")); });
+      });
+
+      const mTabs = document.querySelectorAll("#m-tabs button");
+      const mPages = document.querySelectorAll("#m-panels .m-page");
+      const mTitle = document.getElementById("m-title");
+      const titles = { gorev: "Görevler", gecmis: "Geçmiş", sorun: "Sorun Bildir", profil: "Profil" };
+      function showMTab(id) {
+        mTabs.forEach(function (t) {
+          const on = t.getAttribute("data-mtab") === id;
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        mPages.forEach(function (p) {
+          const on = p.getAttribute("data-mtab") === id;
+          p.classList.toggle("hidden", !on);
+        });
+        mTitle.textContent = titles[id] || "Agrova";
+        setTimeout(initIcons, 0);
+      }
+      mTabs.forEach(function (t) {
+        t.addEventListener("click", function () { showMTab(t.getAttribute("data-mtab")); });
+      });
+
+      const detail = document.getElementById("task-detail");
+      const detailTitle = document.getElementById("detail-title");
+      const detailBody = document.getElementById("detail-body");
+      const detailClose = document.getElementById("detail-close");
+      const detailStart = document.getElementById("detail-start");
+      const detailDone = document.getElementById("detail-done");
+      let currentTaskId = null;
+
+      function openTaskDetail(id) {
+        currentTaskId = id;
+        const t = TASKS[id];
+        if (!t) return;
+        detailTitle.textContent = t.title;
+        detailBody.textContent = t.place + " · " + t.time;
+        detail.classList.add("is-open");
+        detail.setAttribute("aria-hidden", "false");
+        setTimeout(initIcons, 0);
+      }
+      function closeTaskDetail() {
+        detail.classList.remove("is-open");
+        detail.setAttribute("aria-hidden", "true");
+        currentTaskId = null;
+      }
+      detailClose.addEventListener("click", closeTaskDetail);
+      detail.addEventListener("click", function (e) { if (e.target === detail) closeTaskDetail(); });
+      document.querySelectorAll(".m-task").forEach(function (row) {
+        row.addEventListener("click", function (e) {
+          if (e.target.closest(".m-pill")) return;
+          openTaskDetail(row.getAttribute("data-task"));
+        });
+        row.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openTaskDetail(row.getAttribute("data-task")); }
+        });
+      });
+      [detailStart, detailDone].forEach(function (btn) {
+        btn.addEventListener("click", function (e) { e.stopPropagation(); closeTaskDetail(); });
+      });
+      document.querySelectorAll(".m-pill--start, .m-pill--done").forEach(function (b) {
+        b.addEventListener("click", function (e) { e.stopPropagation(); var id = b.getAttribute("data-start") || b.getAttribute("data-done"); if (id) { openTaskDetail(id); } });
+      });
+
+      const catGrid = document.getElementById("cat-grid");
+      let selectedCat = null;
+      catGrid.querySelectorAll(".cat-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const v = btn.getAttribute("data-cat");
+          selectedCat = v;
+          catGrid.querySelectorAll(".cat-btn").forEach(function (c) { c.classList.toggle("is-selected", c === btn); });
+        });
+      });
+      document.getElementById("btn-sorun-submit").addEventListener("click", function () {
+        const fb = document.getElementById("sorun-feedback");
+        if (!selectedCat) { fb.style.color = "var(--error)"; fb.textContent = "Lütfen bir kategori seç."; return; }
+        var txt = (document.getElementById("sorun-text").value || "").trim();
+        if (!txt) { fb.style.color = "var(--error)"; fb.textContent = "Açıklama gerekli."; return; }
+        fb.style.color = "var(--success)";
+        fb.textContent = "Kayıt alındı: " + selectedCat + " — " + txt.slice(0, 40) + (txt.length > 40 ? "…" : "");
+      });
+      document.getElementById("btn-save-settings").addEventListener("click", function () { alert("Ayarlar kaydedildi (prototip)."); });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agrova — Kağıt &amp; Mürekkep (Tasarım 13)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --ink: #1a1a1a;
+        --red: #c0392b;
+        --green: #2c5f2d;
+        --bg: #f7f3ed;
+        --surface: #fffdf8;
+        --text: #1a1a1a;
+        --muted: #666655;
+        --warn: #d4a017;
+        --border: #d5cfc3;
+        --font-serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+        --font-sans: Inter, system-ui, sans-serif;
+        --side: 244px;
+        --tab-h: 72px;
+        --r-sharp: 0;
+        --r-pill: 9999px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-sans);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      .d-title,
+      .d-serif,
+      th {
+        font-family: var(--font-serif);
+        font-weight: 400;
+        margin: 0;
+      }
+      .d-title {
+        font-size: 1.75rem;
+        letter-spacing: -0.02em;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .toggle-bar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--ink);
+        color: #fff;
+        border-bottom: 2px solid #000;
+        min-height: 48px;
+      }
+      .toggle-bar button {
+        font-family: var(--font-sans);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        border: 0;
+        background: transparent;
+        color: #ccc;
+        padding: 14px 24px;
+        cursor: pointer;
+        border-radius: 0;
+        border-bottom: 3px solid transparent;
+      }
+      .toggle-bar button[aria-pressed="true"] {
+        color: #fff;
+        border-bottom-color: #fff;
+      }
+      .toggle-bar .accent-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--red);
+        display: inline-block;
+        margin-right: 8px;
+        vertical-align: middle;
+        flex-shrink: 0;
+      }
+      .view-wrap {
+        display: none;
+        min-height: calc(100vh - 48px);
+      }
+      .view-wrap.is-active {
+        display: block;
+      }
+      .desk-layout {
+        display: flex;
+        min-height: calc(100vh - 48px);
+      }
+      .sidebar {
+        width: var(--side);
+        flex-shrink: 0;
+        background: var(--surface);
+        border-right: 2px solid var(--ink);
+        padding: 0;
+      }
+      .sidebar-brand {
+        padding: 20px 18px 16px;
+        border-bottom: 2px solid var(--border);
+        font-family: var(--font-serif);
+        font-size: 1.35rem;
+        line-height: 1.1;
+      }
+      .sidebar-brand .sub {
+        font-family: var(--font-sans);
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-top: 6px;
+      }
+      .nav {
+        list-style: none;
+        margin: 0;
+        padding: 8px 0;
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 18px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text);
+        border-left: 3px solid transparent;
+      }
+      .nav a .ico {
+        width: 18px;
+        height: 18px;
+        opacity: 0.85;
+      }
+      .nav a.is-active {
+        border-left-color: var(--ink);
+        font-weight: 600;
+      }
+      .main {
+        flex: 1;
+        padding: 24px 28px 40px;
+        max-width: calc(100vw - var(--side));
+        overflow-x: auto;
+      }
+      .main-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--ink);
+      }
+      .main-header .d-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .panel {
+        display: none;
+      }
+      .panel.is-active {
+        display: block;
+      }
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      @media (max-width: 1200px) {
+        .stat-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .stat-tile {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        padding: 18px 16px;
+        border-radius: var(--r-sharp);
+      }
+      .stat-tile .label {
+        font-family: var(--font-serif);
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .stat-tile .value {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 20px;
+        align-items: start;
+      }
+      @media (max-width: 1024px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: var(--r-sharp);
+        overflow: hidden;
+      }
+      .card-h {
+        font-family: var(--font-serif);
+        font-size: 1.1rem;
+        padding: 14px 16px;
+        border-bottom: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .card-b {
+        padding: 16px;
+      }
+      .weather-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .weather-temp {
+        font-family: var(--font-serif);
+        font-size: 2.25rem;
+        line-height: 1;
+      }
+      .weather-meta {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .feed {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .feed li {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .feed li:last-child {
+        border-bottom: 0;
+      }
+      .feed time {
+        color: var(--muted);
+        font-size: 11px;
+        display: block;
+        margin-top: 4px;
+        font-family: var(--font-sans);
+      }
+      .kanban {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 24px;
+      }
+      @media (max-width: 900px) {
+        .kanban {
+          grid-template-columns: 1fr;
+        }
+      }
+      .k-col {
+        background: var(--bg);
+        border: 2px solid var(--ink);
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--r-sharp);
+      }
+      .k-col h3 {
+        font-size: 12px;
+        padding: 10px 12px;
+        background: var(--surface);
+        border-bottom: 2px solid var(--ink);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .k-cards {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+      }
+      .k-card {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        padding: 10px 10px 12px;
+        font-size: 12px;
+        border-radius: var(--r-sharp);
+        cursor: default;
+      }
+      .k-card strong {
+        font-family: var(--font-serif);
+        font-size: 13px;
+        display: block;
+        margin-bottom: 6px;
+      }
+      .chip {
+        display: inline-block;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 2px 6px;
+        border: 1px solid var(--ink);
+        margin-top: 6px;
+        background: #fff;
+      }
+      .chip.err,
+      .chip.critical {
+        border-color: var(--red);
+        color: var(--red);
+      }
+      .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; align-items: flex-end; }
+      .field { display: flex; flex-direction: column; gap: 4px; }
+      .field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+      input, select, textarea, button.ghost { font-family: var(--font-sans); font-size: 13px; border-radius: var(--r-sharp); border: 2px solid var(--ink); background: var(--surface); padding: 8px 10px; color: var(--text); }
+      textarea { min-height: 80px; resize: vertical; }
+      button.ghost { cursor: pointer; font-weight: 600; background: var(--ink); color: #fff; border-color: #000; }
+      .table-wrap { border: 2px solid var(--ink); background: var(--surface); overflow: auto; }
+      table { width: 100%; border-collapse: collapse; font-size: 12px; }
+      th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding: 12px 14px; border-bottom: 3px solid #000; background: var(--bg); white-space: nowrap; }
+      td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+      tr:hover td { background: #faf7f0; }
+      .badge-ok { color: var(--green); font-weight: 600; }
+      .badge-warn { color: var(--warn); font-weight: 600; }
+      .field-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      @media (max-width: 1100px) { .field-grid { grid-template-columns: repeat(2, 1fr); } }
+      .field-card { border: 2px solid var(--ink); background: var(--surface); display: flex; flex-direction: column; border-radius: var(--r-sharp); overflow: hidden; }
+      .field-card .ph { height: 100px; background-color: #ebe6dc; background-image: repeating-linear-gradient(45deg, #d5cfc3 0, #d5cfc3 1px, transparent 1px, transparent 6px), repeating-linear-gradient(-45deg, #d5cfc3 0, #d5cfc3 1px, transparent 1px, transparent 6px); background-size: 8px 8px; border-bottom: 2px solid var(--ink); position: relative; }
+      .field-card .ph::after { content: "HARİTA"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 0.9rem; color: var(--muted); letter-spacing: 0.2em; }
+      .field-card .body { padding: 12px 14px 14px; }
+      .field-card h3 { font-size: 1rem; margin-bottom: 6px; }
+      .issues-list { display: flex; flex-direction: column; border: 2px solid var(--ink); background: var(--surface); border-radius: var(--r-sharp); overflow: hidden; }
+      .issue { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 14px 16px; border-bottom: 2px solid var(--border); align-items: start; }
+      .issue:last-child { border-bottom: 0; }
+      .issue h3 { font-size: 1.05rem; margin-bottom: 4px; }
+      .issue.critical h3 { color: var(--red); }
+      .issue .meta { color: var(--muted); font-size: 12px; margin-top: 6px; }
+      .team-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      @media (max-width: 1000px) { .team-grid { grid-template-columns: repeat(2, 1fr); } }
+      .person { border: 2px solid var(--ink); padding: 16px; background: var(--surface); border-radius: var(--r-sharp); }
+      .person h3 { font-size: 1.1rem; margin-bottom: 4px; }
+      .person .role { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+      .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .cat { border: 2px solid var(--ink); background: var(--surface); border-radius: var(--r-sharp); overflow: hidden; }
+      .cat h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 8px 12px; background: #ebe6dc; border-bottom: 2px solid var(--ink); }
+      .cat ul { list-style: none; margin: 0; padding: 10px 12px 12px; font-size: 12px; }
+      .cat li { padding: 6px 0; border-bottom: 1px dotted var(--border); }
+      .cat li:last-child { border-bottom: 0; }
+      .settings-form { max-width: 520px; display: flex; flex-direction: column; gap: 16px; }
+      .settings-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      @media (max-width: 600px) { .settings-form .row { grid-template-columns: 1fr; } }
+      .check-row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+      .check-row input { width: 18px; height: 18px; padding: 0; }
+      .mobile-outer { display: flex; justify-content: center; padding: 32px 16px 48px; background: #e8e2d8; min-height: calc(100vh - 48px); }
+      .phone { width: 390px; max-width: 100%; background: #1a1a1a; border-radius: 12px; border: 3px solid #0d0d0d; box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22); overflow: hidden; display: flex; flex-direction: column; min-height: 720px; }
+      .phone-top { height: 4px; background: #111; flex-shrink: 0; }
+      .phone-screen { background: var(--bg); flex: 1; display: flex; flex-direction: column; min-height: 0; border-radius: 0; }
+      .phone-h { padding: 14px 16px 10px; border-bottom: 2px solid var(--ink); background: var(--surface); font-family: var(--font-serif); font-size: 1.2rem; display: flex; align-items: center; justify-content: space-between; }
+      .m-panel { display: none; flex: 1; overflow: auto; padding: 12px 12px 8px; min-height: 0; }
+      .m-panel.is-active { display: block; }
+      .task-list { display: flex; flex-direction: column; gap: 10px; }
+      .task-card { border: 2px solid var(--ink); background: var(--surface); padding: 12px 12px 14px; border-radius: var(--r-sharp); cursor: pointer; }
+      .task-card h3 { font-size: 1rem; margin-bottom: 6px; }
+      .task-card .line { font-size: 12px; color: var(--muted); }
+      .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+      .pill { min-height: 36px; padding: 0 14px; border: 2px solid var(--ink); background: #fff; font-size: 12px; font-weight: 600; border-radius: var(--r-pill); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-sans); }
+      .pill.is-on { background: var(--ink); color: #fff; }
+      .m-detail { display: none; flex: 1; flex-direction: column; min-height: 0; background: var(--bg); }
+      .m-detail.is-open { display: flex; }
+      .m-detail .top { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--surface); border-bottom: 2px solid var(--ink); font-family: var(--font-serif); font-size: 1.05rem; }
+      .m-detail .top button { border: 0; background: none; cursor: pointer; padding: 4px; color: var(--ink); display: flex; border-radius: 0; }
+      .m-detail .scroll { flex: 1; overflow: auto; padding: 14px 12px 16px; font-size: 13px; }
+      .m-detail h4 { font-family: var(--font-serif); font-size: 1.05rem; margin: 0 0 8px; }
+      .m-detail .pills { margin-top: 16px; }
+      .tabbar { display: flex; height: var(--tab-h); border-top: 2px solid #000; background: #111; flex-shrink: 0; }
+      .tabbar button { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 0; background: transparent; color: #888; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; padding: 0; border-radius: 0; }
+      .tabbar button .i { width: 20px; height: 20px; color: #aaa; }
+      .tabbar button.is-on { color: #fff; }
+      .tabbar button.is-on .i { color: #fff; }
+      .m-placeholder { font-size: 13px; color: var(--muted); line-height: 1.5; padding: 4px 0; }
+      .classif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+      .classif { border: 2px solid var(--ink); background: var(--surface); padding: 8px; font-size: 11px; min-height: 88px; border-radius: var(--r-sharp); cursor: pointer; }
+      .classif h4 { font-family: var(--font-serif); font-size: 0.85rem; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+      .classif.is-sel { outline: 2px solid var(--ink); outline-offset: 2px; background: #faf7f0; }
+      .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+      @media print {
+        .toggle-bar, .nav, .tabbar, .filter-bar, button, .phone-top { display: none !important; }
+        body { background: #fff; }
+        .view-wrap, .desk-layout, .main, .m-panel, .field-card, .cat, .stat-tile, .card, .k-col { break-inside: avoid; }
+        .table-wrap { border: 1px solid #000; }
+        th { border-bottom: 2pt solid #000; }
+        a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; }
+      }
+      :focus-visible {
+        outline: 3px solid var(--ink);
+        outline-offset: 2px;
+      }
+      .tabbar button:focus-visible,
+      .nav a:focus-visible,
+      .task-card:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: -2px;
+      }
+      .edition-kicker {
+        font-family: var(--font-sans);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--muted);
+        margin: 0 0 4px;
+      }
+      .rule-ink {
+        height: 0;
+        border: 0;
+        border-top: 2px solid var(--ink);
+        margin: 12px 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toggle-bar" role="group" aria-label="Görünüm seçin">
+      <span class="accent-dot" aria-hidden="true"></span>
+      <button type="button" id="btn-desk" aria-pressed="true">Masaüstü / Sahip Görünümü</button>
+      <button type="button" id="btn-mob" aria-pressed="false">Mobil / İşçi Görünümü</button>
+    </div>
+    <div id="view-desk" class="view-wrap is-active" data-view="desk">
+      <div class="desk-layout">
+        <aside class="sidebar" aria-label="Ana menü">
+          <div class="sidebar-brand">Agrova<div class="sub">Çiftlik Operasyonu</div></div>
+          <ul class="nav" id="desk-nav">
+            <li><a href="#bugun" data-panel="bugun" class="is-active"><i data-lucide="newspaper" class="ico"></i> Bugün (Özet)</a></li>
+            <li><a href="#gorevler" data-panel="gorevler"><i data-lucide="clipboard-list" class="ico"></i> Görevler</a></li>
+            <li><a href="#tarlalar" data-panel="tarlalar"><i data-lucide="map" class="ico"></i> Tarlalar</a></li>
+            <li><a href="#sorunlar" data-panel="sorunlar"><i data-lucide="alert-triangle" class="ico"></i> Sorunlar</a></li>
+            <li><a href="#ekip" data-panel="ekip"><i data-lucide="users" class="ico"></i> Ekip</a></li>
+            <li><a href="#ekipman" data-panel="ekipman"><i data-lucide="tractor" class="ico"></i> Ekipman</a></li>
+            <li><a href="#ayarlar" data-panel="ayarlar"><i data-lucide="settings" class="ico"></i> Ayarlar</a></li>
+          </ul>
+        </aside>
+        <main class="main" id="desk-main">
+          <div id="panel-bugun" class="panel is-active" data-panel="bugun" role="region" aria-label="Bugün">
+            <p class="edition-kicker">Günlük baskı · saha bülteni (taslak prototip)</p>
+            <header class="main-header">
+              <div class="d-title">Bugün — Özet</div>
+              <div style="font-size: 12px; color: var(--muted); text-align: right">23 Nisan 2026 · Baskı A</div>
+            </header>
+            <hr class="rule-ink" />
+            <div class="stat-row">
+              <div class="stat-tile"><div class="label">Açık görev</div><div class="value">47</div></div>
+              <div class="stat-tile"><div class="label">Aktif arazi</div><div class="value">12</div></div>
+              <div class="stat-tile"><div class="label">Çevrimiçi işçi</div><div class="value">8</div></div>
+              <div class="stat-tile"><div class="label">Açık sorun</div><div class="value">3</div></div>
+            </div>
+            <div class="grid-2">
+              <div class="card">
+                <div class="card-h">Hava — İstanbul</div>
+                <div class="card-b">
+                  <div class="weather-row">
+                    <div>
+                      <div class="weather-temp">22°C</div>
+                      <div class="weather-meta">Kısmen bulutlu · Rüzgar 18 km/s</div>
+                    </div>
+                    <i data-lucide="cloud-sun" style="width: 48px; height: 48px; stroke-width: 1.25"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h">Son hareketler</div>
+                <div class="card-b" style="padding: 0 16px 8px">
+                  <ul class="feed">
+                    <li><strong>Mehmet Kaya</strong> “Çukurova-3 / Sulama” görevini tamamladı.<time>09:14</time></li>
+                    <li><strong>Ayşe Demir</strong> yeni not: Ayçiçeği sahası kenarında yabani ot yoğun.<time>08:41</time></li>
+                    <li><strong>Ahmet Yılmaz</strong> ekipman ön kontrolü: John Deere 6120M — tamam.<time>08:02</time></li>
+                    <li>Sistem: “Büyük Menderes Tarlası” sulama penceresi güncellendi.<time>07:30</time></li>
+                    <li><strong>Depo B</strong> stok: fitil 120 m — alt eşiğe yaklaştı; satınalma e-postası gitti.<time>07:10</time></li>
+                    <li><strong>Ayşe Demir</strong> gözlem: ayçiçeği kenarında yabani yulaf yoğunluğu artışı. <time>06:45</time></li>
+                    <li>Yerel hava: İstanbul’da öğleden sonra rüzgar 22 km/s’ye çıkabilir; uçtan uca ilaçlama ertelendi. <time>06:00</time></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <h2 class="d-title" style="margin: 20px 0 12px; font-size: 1.2rem">İş panosu (Kanban)</h2>
+            <div class="kanban" role="list">
+              <div class="k-col" role="listitem" aria-label="Beklemede">
+                <h3 class="d-serif">Beklemede</h3>
+                <div class="k-cards">
+                  <div class="k-card"><strong>Çimlenme sayımı</strong>Yeşil Saha A · 4 parsel<span class="chip">Bu hafta</span></div>
+                  <div class="k-card"><strong>Gübre dağıtım planı</strong>Küçük Menderes Batı<span class="chip">Planlı</span></div>
+                </div>
+              </div>
+              <div class="k-col" role="listitem" aria-label="Devam ediyor">
+                <h3 class="d-serif">Devam ediyor</h3>
+                <div class="k-cards">
+                  <div class="k-card"><strong>Damlama hat kontrolü</strong>Çukurova-3 · Hat 2<span class="chip" style="border-color: var(--green); color: var(--green)">Aktif</span></div>
+                  <div class="k-card"><strong>Hasat hazırlık</strong>Organik bağ · Row 5–8<span class="chip">Ekip: 3 kişi</span></div>
+                </div>
+              </div>
+              <div class="k-col" role="listitem" aria-label="Bekleyen inceleme veya risk">
+                <h3 class="d-serif">İnceleme / Risk</h3>
+                <div class="k-cards">
+                  <div class="k-card"><strong>Kuraklık uyarısı</strong>Güney blok · yaprak tespiti<span class="chip err">Eksik stok: fitil</span></div>
+                  <div class="k-card"><strong>Kritik: don riski</strong>Dağ eteği C<span class="chip critical">Düşük sıcaklık</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="panel-gorevler" class="panel" data-panel="gorevler" role="region" aria-label="Görevler">
+            <header class="main-header"><div class="d-title">Görevler</div></header>
+            <div class="filter-bar">
+              <div class="field"><label for="f-q">Ara</label><input type="search" id="f-q" placeholder="Görev veya parsel" /></div>
+              <div class="field"><label for="f-s">Durum</label><select id="f-s"><option>Tümü</option><option>Planlı</option><option>Devam</option><option>Tamam</option></select></div>
+              <div class="field"><label for="f-t">Tarla</label><select id="f-t"><option>Hepsi</option><option>Çukurova-3</option><option>Büyük Menderes Tarlası</option></select></div>
+              <button type="button" class="ghost" id="btn-filter">Filtrele</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Görev</th><th>Tarla / Parsel</th><th>Atanan</th><th>Bitiş</th><th>Durum</th></tr></thead>
+                <tbody>
+                  <tr><td>Çimlenme sayımı — örneklem</td><td>Yeşil Saha A / P4</td><td>Ahmet Yılmaz</td><td>25 Nis 2026</td><td><span class="badge-warn">Planlı</span></td></tr>
+                  <tr><td>Damlama hat kontrolü (Hat 2)</td><td>Çukurova-3</td><td>Mehmet Kaya</td><td>24 Nis 2026</td><td><span class="badge-ok">Devam</span></td></tr>
+                  <tr><td>Tarım ilaç uygulaması — 2. safha</td><td>Büyük Menderes Tarlası / Kuzey</td><td>Ayşe Demir</td><td>22 Nis 2026</td><td><span class="badge-ok">Devam</span></td></tr>
+                  <tr><td>Traktör 6120M ön sezon bakım</td><td>Depo / Garaj 1</td><td>Ahmet Yılmaz</td><td>20 Nis 2026</td><td><span class="badge-ok" style="color: var(--text)">Tamam</span></td></tr>
+                  <tr><td>Don önlemi: örtü kontrol</td><td>Dağ eteği C</td><td>Ekip 2 (vardiya)</td><td>24 Nis 2026</td><td><span class="chip err" style="border: 0; padding: 0; background: none">Gecikme</span></td></tr>
+                  <tr><td>Kantar kalibrasyonu (yıllık)</td><td>Giriş kantarı / tartı 1</td><td>Mehmet Kaya</td><td>28 Nis 2026</td><td><span class="badge-warn">Planlı</span></td></tr>
+                  <tr><td>Fide dikimi (son parti)</td><td>Yeşil Saha A / Sera 2</td><td>Ahmet Yılmaz</td><td>23 Nis 2026</td><td><span class="badge-ok">Devam</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="panel-tarlalar" class="panel" data-panel="tarlalar" role="region" aria-label="Tarlalar">
+            <header class="main-header"><div class="d-title">Tarlalar</div></header>
+            <div class="field-grid">
+              <article class="field-card"><div class="ph" role="img" aria-label="Harita (çapraz tarama)"></div><div class="body"><h3>Çukurova-3</h3><p class="m-placeholder" style="margin: 0">Buğday · 28 ha · Son sulama: 21 Nis</p></div></article>
+              <article class="field-card"><div class="ph" role="img" aria-label="Harita"></div><div class="body"><h3>Büyük Menderes Tarlası</h3><p class="m-placeholder" style="margin: 0">Mısır rotasyonu · 42 ha · pH: 6.7</p></div></article>
+              <article class="field-card"><div class="ph" role="img" aria-label="Harita"></div><div class="body"><h3>Yeşil Saha A</h3><p class="m-placeholder" style="margin: 0">Organik sebze demeti · 8 parsel</p></div></article>
+            </div>
+          </div>
+          <div id="panel-sorunlar" class="panel" data-panel="sorunlar" role="region" aria-label="Sorunlar">
+            <header class="main-header"><div class="d-title">Sorunlar</div></header>
+            <div class="issues-list">
+              <div class="issue">
+                <div><h3>Kurutucu: fitil stok eşiği</h3><p class="m-placeholder" style="margin: 0">Depo B — 120 m kaldı; sipariş onayı bekleniyor.</p><p class="meta">Kaynak: saha ekip lideri · 22 Nis 2026</p></div>
+                <span class="chip err">Eksik</span>
+              </div>
+              <div class="issue critical">
+                <div><h3>Don riski — meteoroloji uyarısı</h3><p class="m-placeholder" style="margin: 0">Gece 02:00’de 1°C; örtü ve sulama penceresi denetlendi.</p><p class="meta">Dağ eteği C</p></div>
+                <span class="chip critical">Kritik</span>
+              </div>
+              <div class="issue">
+                <div><h3>Sulama vanası kaçağı (Hat 2)</h3><p class="m-placeholder" style="margin: 0">Kısmi basınç kaybı; tamir 24 Nis sabahı planlı.</p><p class="meta">Çukurova-3</p></div>
+                <span class="chip" style="color: var(--warn); border-color: var(--warn)">Beklemede</span>
+              </div>
+            </div>
+          </div>
+          <div id="panel-ekip" class="panel" data-panel="ekip" role="region" aria-label="Ekip">
+            <header class="main-header"><div class="d-title">Ekip</div></header>
+            <div class="team-grid">
+              <div class="person"><h3>Ahmet Yılmaz</h3><div class="role">Saha koordinatörü</div><p class="m-placeholder" style="margin: 0">Bugün: Yeşil Saha A, sayım. Çevrimiçi.</p></div>
+              <div class="person"><h3>Mehmet Kaya</h3><div class="role">Sulama teknisyeni</div><p class="m-placeholder" style="margin: 0">Çukurova-3; hat kontrolü. Çevrimiçi.</p></div>
+              <div class="person"><h3>Ayşe Demir</h3><div class="role">Bitki sağlığı</div><p class="m-placeholder" style="margin: 0">İlaç uygulama takibi, rapor. Çevrimdışı 18:00’e.</p></div>
+            </div>
+          </div>
+          <div id="panel-ekipman" class="panel" data-panel="ekipman" role="region" aria-label="Ekipman">
+            <header class="main-header"><div class="d-title">Ekipman</div></header>
+            <div class="cat-grid">
+              <div class="cat"><h3>Traktör</h3><ul><li>John Deere 6120M — 4.200 saat · sağlam</li><li>New Holland T5 — 2.100 saat · periyodik bakım 30 Nis</li></ul></div>
+              <div class="cat"><h3>Sulama</h3><ul><li>Dizel pompa 12 kW — aktif</li><li>Filtrasyon ünitesi — kartuş değişimi sırada</li></ul></div>
+              <div class="cat"><h3>Depolama &amp; taşıma</h3><ul><li>Soğuk hava 24 m³ — +4°C hedef</li><li>Tomruk yarı römork — fren kontrol 26 Nis</li></ul></div>
+              <div class="cat"><h3>Güvenlik</h3><ul><li>İlaçlama tulum seti (4)</li><li>İlk yardım çantası alan 2 — tam</li></ul></div>
+            </div>
+          </div>
+          <div id="panel-ayarlar" class="panel" data-panel="ayarlar" role="region" aria-label="Ayarlar">
+            <header class="main-header"><div class="d-title">Ayarlar</div></header>
+            <form class="settings-form" id="form-settings" onsubmit="return false">
+              <div class="field"><label for="op-name">İşletme adı</label><input type="text" id="op-name" value="Dörtyol Zeytin A.Ş. (taslak)" /></div>
+              <div class="row">
+                <div class="field"><label for="tz">Saat dilimi</label><select id="tz"><option selected>Europe/Istanbul (GMT+3)</option><option>UTC</option></select></div>
+                <div class="field"><label for="unit">Birim</label><select id="unit"><option>ha, °C, mm</option><option>dönüm</option></select></div>
+              </div>
+              <div class="field"><label for="notify">Bildirim e-postası</label><input type="email" id="notify" value="operasyon@dortyolzeytin.example" /></div>
+              <div class="check-row"><input type="checkbox" id="ck-digest" checked /><label for="ck-digest">Günlük özet (07:00)</label></div>
+              <div class="check-row"><input type="checkbox" id="ck-weather" checked /><label for="ck-weather">Hava uyarıları (bölge: İzmir, Manisa, Aydın)</label></div>
+              <button type="button" class="ghost" id="btn-save">Kaydet (mock)</button>
+            </form>
+            <p class="edition-kicker" style="margin-top: 28px; max-width: 42em">
+              Colophon: bu sayfa yalnızca görsel prototiptir. Veri senkronizasyonu, izinler ve hava servisi bağlantıları
+              yoktur; üretimde KVKK ve saha kayıt politikalarına uyulmalıdır.
+            </p>
+          </div>
+        </main>
+      </div>
+    </div>
+    <div id="view-mob" class="view-wrap" data-view="mob" hidden>
+      <div class="mobile-outer">
+        <div class="phone" aria-label="Telefon 390 piksel">
+          <div class="phone-top" aria-hidden="true"></div>
+          <div class="phone-screen">
+            <div id="m-tasks-main">
+              <div class="phone-h"><span class="d-title" style="font-size: 1.15rem">Görevler</span><i data-lucide="more-horizontal" style="width: 22px; height: 22px"></i></div>
+              <div id="m-panel-g" class="m-panel is-active" data-mtab="gorevler" role="tabpanel">
+                <p class="m-placeholder" style="margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted)">Bugünkü baskı</p>
+                <div class="task-list" id="m-task-list">
+                  <div class="task-card" data-task="1" tabindex="0" role="button" aria-label="Damlama hat kontrolü"><h3>Damlama hat kontrolü (Hat 2)</h3><div class="line">Çukurova-3 · Mehmet Kaya</div><div class="pills" aria-hidden="true"><span class="pill" style="pointer-events: none; opacity: 0.5">Yüksek</span><span class="pill" style="pointer-events: none; opacity: 0.5">Sulama</span></div></div>
+                  <div class="task-card" data-task="2" tabindex="0" role="button" aria-label="İlaç 2. safha"><h3>İlaç uygulaması — 2. safha</h3><div class="line">Büyük Menderes / Kuzey · Ayşe Demir</div><div class="pills" aria-hidden="true"><span class="pill" style="pointer-events: none; opacity: 0.5">Bitki</span></div></div>
+                  <div class="task-card" data-task="3" tabindex="0" role="button" aria-label="Sayım"><h3>Çimlenme sayımı (örneklem)</h3><div class="line">Yeşil Saha A / P4 · Ahmet Yılmaz</div><div class="pills" aria-hidden="true"><span class="pill" style="pointer-events: none; opacity: 0.5">Ölçüm</span></div></div>
+                  <div class="task-card" data-task="4" tabindex="0" role="button" aria-label="Don önlemi"><h3>Don önlemi: örtü denetim</h3><div class="line">Dağ eteği C · vardiya</div><div class="pills" aria-hidden="true"><span class="chip err" style="margin: 6px 0 0; display: inline-block">Gecikme</span></div></div>
+                  <div class="task-card" data-task="5" tabindex="0" role="button" aria-label="Traktör kontrol"><h3>Traktör 6120M periyodik kontrol</h3><div class="line">Depo 1 · tamam</div><div class="pills" aria-hidden="true"><span class="pill" style="pointer-events: none; opacity: 0.5">Ekipman</span></div></div>
+                </div>
+              </div>
+              <div id="m-panel-gc" class="m-panel" data-mtab="gecmis" role="tabpanel" hidden>
+                <p class="d-title" style="font-size: 1.05rem; margin-bottom: 10px">Geçmiş</p>
+                <p class="m-placeholder">Dün: Çukurova-3 sulama penceresi kapatıldı (onay: Mehmet Kaya).</p>
+                <p class="m-placeholder" style="margin-top: 10px">20 Nis: Büyük Menderes yabani ot ilaçlama 1. safha bitti; çevre tamponu kaydı alındı.</p>
+              </div>
+              <div id="m-panel-s" class="m-panel" data-mtab="sorun" role="tabpanel" hidden>
+                <p class="d-title" style="font-size: 1.05rem; margin-bottom: 6px">Sorun bildir</p>
+                <p class="m-placeholder" style="margin-bottom: 12px">Kategori: ilan sütunları. Kırmızı sadece hata ve onay (mock) için.</p>
+                <div class="classif-grid" id="classif-grid" role="group" aria-label="Kategori">
+                  <button type="button" class="classif is-sel" data-cat="sulama"><h4>Sulama</h4><div style="color: var(--muted)">Kaçak, basınç, filtre</div></button>
+                  <button type="button" class="classif" data-cat="bitki"><h4>Bitki / hastalık</h4><div style="color: var(--muted)">Külleme, yaprak, zararlı</div></button>
+                  <button type="button" class="classif" data-cat="ekipman"><h4>Ekipman</h4><div style="color: var(--muted)">Arıza, traktör, pompa</div></button>
+                  <button type="button" class="classif" data-cat="diger"><h4>Diğer</h4><div style="color: var(--muted)">Güvenlik, çit, sınır</div></button>
+                </div>
+                <div class="field" style="margin-top: 16px"><label for="issue-body">Açıklama</label><textarea id="issue-body" placeholder="Kısaca: konum, ne zaman, etki alanı."></textarea></div>
+                <button type="button" class="ghost" id="issue-send" style="margin-top: 12px; width: 100%; min-height: 48px; border-radius: 0">Bildirimi gönder (mock)</button>
+                <p class="m-placeholder" id="issue-ack" style="display: none; color: var(--red); font-weight: 600; margin-top: 8px" role="status">Ağ hatası değil — yalnızca tasarım onayı: gönderilemedi (mock)</p>
+              </div>
+              <div id="m-panel-p" class="m-panel" data-mtab="profil" role="tabpanel" hidden>
+                <p class="d-title" style="font-size: 1.1rem; margin-bottom: 4px">Mehmet Kaya</p>
+                <p class="m-placeholder" style="margin: 0 0 12px; text-transform: uppercase; font-size: 10px; letter-spacing: 0.12em">Sulama teknisyeni</p>
+                <p class="m-placeholder" style="margin: 0">Bugün: 4 görev · saha: Ege</p>
+                <p class="m-placeholder" style="margin-top: 10px">PIN ve konum: sahip görünümü — prototip ekran.</p>
+              </div>
+            </div>
+            <div id="m-detail" class="m-detail" aria-hidden="true" hidden>
+              <div class="top">
+                <button type="button" id="btn-back" aria-label="Geri"><i data-lucide="chevron-left" style="width: 24px; height: 24px"></i></button>
+                <span id="detail-title" class="d-title" style="font-size: 1.1rem; flex: 1">Görev</span>
+                <i data-lucide="share-2" style="width: 20px; height: 20px; opacity: 0.5"></i>
+              </div>
+              <div class="scroll" id="detail-body">
+                <h4>Özet</h4>
+                <p class="m-placeholder" id="detail-desc"></p>
+                <h4 style="margin-top: 16px">Hızlı eylem</h4>
+                <p class="m-placeholder">Pill düğmeler: min. 72px yükseklik.</p>
+                <div class="pills" id="detail-pills">
+                  <button type="button" class="pill" style="min-height: 72px; min-width: 48%">Başlat</button>
+                  <button type="button" class="pill" style="min-height: 72px; min-width: 48%">Not ekle</button>
+                  <button type="button" class="pill" style="min-height: 72px; width: 100%; margin-top: 4px">Foto ekle (mock)</button>
+                </div>
+                <p class="m-placeholder" style="margin-top: 14px; font-size: 11px; color: var(--muted)">Başlıklar: DM Serif · gövde: Inter</p>
+              </div>
+            </div>
+            <div class="tabbar" role="tablist" aria-label="Alt menü">
+              <button type="button" class="is-on" data-mtab="gorevler" role="tab" aria-selected="true" id="tab-g"><i data-lucide="clipboard-list" class="i"></i>Görevler</button>
+              <button type="button" data-mtab="gecmis" role="tab" aria-selected="false" id="tab-h"><i data-lucide="history" class="i"></i>Geçmiş</button>
+              <button type="button" data-mtab="sorun" role="tab" aria-selected="false" id="tab-s"><i data-lucide="alert-triangle" class="i"></i>Sorun</button>
+              <button type="button" data-mtab="profil" role="tab" aria-selected="false" id="tab-p"><i data-lucide="user" class="i"></i>Profil</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="toast" class="sr" role="status" aria-live="polite"></div>
+    <script>
+      (function () {
+        const desk = document.getElementById("view-desk");
+        const mob = document.getElementById("view-mob");
+        const nav = document.getElementById("desk-nav");
+        const mobTabs = document.querySelectorAll('.tabbar [data-mtab]');
+        const mobPanels = document.querySelectorAll('.m-panel[data-mtab]');
+        const mMain = document.getElementById("m-tasks-main");
+        const mDetail = document.getElementById("m-detail");
+        const detailTitle = document.getElementById("detail-title");
+        const detailDesc = document.getElementById("detail-desc");
+        const taskBodies = {
+          1: "Çukurova-3, Hat 2: düşük basınç. Vanalar sırayla açık; sızıntı bölge sonunda olası.",
+          2: "Büyük Menderes kuzey blok: 2. safha ilaç. Rüzgar sınırı < 15 km/s, tampon 15 m.",
+          3: "Yeşil Saha A P4: çimlenme oranı rastgele 10×1 m kare, foto ile örnek.",
+          4: "Dağ eteği C: örtü ve taşkın sulama. Gecikme: malzeme transferi (kritik değil).",
+          5: "John Deere 6120M: sezon öncesi kontrol listesi tamam; kayıt sahibe kilitlendi.",
+        };
+        function mountIcons() {
+          if (typeof lucide !== "undefined" && lucide.createIcons) lucide.createIcons();
+        }
+        function showToast(msg) { document.getElementById("toast").textContent = msg; }
+        function setView(which) {
+          if (which === "desk") {
+            desk.classList.add("is-active");
+            desk.removeAttribute("hidden");
+            mob.classList.remove("is-active");
+            mob.setAttribute("hidden", "hidden");
+            document.getElementById("btn-desk").setAttribute("aria-pressed", "true");
+            document.getElementById("btn-mob").setAttribute("aria-pressed", "false");
+            mountIcons();
+          } else {
+            desk.classList.remove("is-active");
+            desk.setAttribute("hidden", "hidden");
+            mob.classList.add("is-active");
+            mob.removeAttribute("hidden");
+            document.getElementById("btn-mob").setAttribute("aria-pressed", "true");
+            document.getElementById("btn-desk").setAttribute("aria-pressed", "false");
+            mountIcons();
+          }
+        }
+        document.getElementById("btn-desk").addEventListener("click", function () { setView("desk"); });
+        document.getElementById("btn-mob").addEventListener("click", function () { setView("mob"); });
+        nav.addEventListener("click", function (e) {
+          const a = e.target.closest("a[data-panel]");
+          if (!a) return;
+          e.preventDefault();
+          const id = a.getAttribute("data-panel");
+          nav.querySelectorAll("a").forEach(function (x) { x.classList.remove("is-active"); });
+          a.classList.add("is-active");
+          document.querySelectorAll("#desk-main .panel").forEach(function (p) { p.classList.toggle("is-active", p.getAttribute("data-panel") === id); });
+        });
+        document.getElementById("btn-filter").addEventListener("click", function () { showToast("Filtre uygulandı (yalnızca prototip)."); });
+        document.getElementById("btn-save").addEventListener("click", function () { showToast("Ayarlar kaydedildi (mock)."); });
+        function mtabActivate(id) {
+          mobTabs.forEach(function (b) {
+            const on = b.getAttribute("data-mtab") === id;
+            b.classList.toggle("is-on", on);
+            b.setAttribute("aria-selected", on ? "true" : "false");
+          });
+          mobPanels.forEach(function (p) {
+            const on = p.getAttribute("data-mtab") === id;
+            p.classList.toggle("is-active", on);
+            if (on) p.removeAttribute("hidden");
+            else p.setAttribute("hidden", "hidden");
+          });
+          if (mDetail.classList.contains("is-open") && id !== "gorevler") {
+            mDetail.classList.remove("is-open");
+            mDetail.setAttribute("hidden", "hidden");
+            mDetail.setAttribute("aria-hidden", "true");
+            mMain.removeAttribute("hidden");
+          }
+          mountIcons();
+        }
+        mobTabs.forEach(function (b) { b.addEventListener("click", function () { mtabActivate(b.getAttribute("data-mtab")); }); });
+        function openTaskDetail(k) {
+          const card = document.querySelector('.task-card[data-task="' + k + '"]');
+          detailTitle.textContent = card ? card.querySelector("h3").textContent : "Görev";
+          detailDesc.textContent = taskBodies[k] || "Açıklama yok.";
+          mDetail.classList.add("is-open");
+          mDetail.removeAttribute("hidden");
+          mDetail.setAttribute("aria-hidden", "false");
+          mMain.setAttribute("hidden", "hidden");
+          mountIcons();
+        }
+        const taskList = document.getElementById("m-task-list");
+        taskList.addEventListener("click", function (e) {
+          const card = e.target.closest(".task-card[data-task]");
+          if (!card) return;
+          openTaskDetail(card.getAttribute("data-task"));
+        });
+        taskList.addEventListener("keydown", function (e) {
+          if (e.key !== "Enter" && e.key !== " ") return;
+          const card = e.target.closest(".task-card[data-task]");
+          if (!card) return;
+          e.preventDefault();
+          openTaskDetail(card.getAttribute("data-task"));
+        });
+        document.getElementById("btn-back").addEventListener("click", function () {
+          mDetail.classList.remove("is-open");
+          mDetail.setAttribute("hidden", "hidden");
+          mDetail.setAttribute("aria-hidden", "true");
+          mMain.removeAttribute("hidden");
+          mtabActivate("gorevler");
+        });
+        document.getElementById("classif-grid").addEventListener("click", function (e) {
+          const b = e.target.closest(".classif");
+          if (!b) return;
+          document.querySelectorAll("#classif-grid .classif").forEach(function (c) { c.classList.remove("is-sel"); });
+          b.classList.add("is-sel");
+        });
+        document.getElementById("issue-send").addEventListener("click", function () {
+          document.getElementById("issue-ack").style.display = "block";
+          showToast("Mock bildirim: form doğrulama yok");
+        });
+        document.getElementById("detail-pills").addEventListener("click", function (e) {
+          const pill = e.target.closest(".pill");
+          if (!pill) return;
+          pill.classList.toggle("is-on");
+        });
+        setView("desk");
+        mountIcons();
+      })();
+    </script>
+  </body>
+</html>
