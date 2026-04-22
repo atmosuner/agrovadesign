@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agrova — Nordic Frost</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #60A5FA;
+      --accent: #06B6D4;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-1: #F1F5F9;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      --success: #22C55E;
+      --warning: #F59E0B;
+      --error: #EF4444;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input, select, textarea { font-family: inherit; font-size: 14px; }
+
+    .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* View toggle */
+    .view-toggle-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .view-toggle-bar label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .toggle-group {
+      display: flex;
+      padding: 4px;
+      background: var(--surface-1);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .toggle-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    }
+    .toggle-btn:hover { color: var(--text); }
+    .toggle-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    .toggle-btn.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    /* ========== DESKTOP ========== */
+    .desktop-layout {
+      display: none;
+      flex: 1;
+      min-height: 0;
+    }
+    .desktop-layout.active { display: flex; }
+
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .brand-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+    }
+    .brand h1 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+    .brand span { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-align: left;
+      width: 100%;
+      transition: background 0.12s, color 0.12s;
+    }
+    .nav-item:hover { background: var(--surface-1); color: var(--text); }
+    .nav-item:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    .nav-item.active { background: rgba(37, 99, 235, 0.08); color: var(--primary); }
+    .nav-item i { width: 18px; height: 18px; opacity: 0.9; }
+
+    .main-area {
+      flex: 1;
+      overflow: auto;
+      padding: 28px 36px 40px;
+      min-width: 0;
+    }
+    .panel { display: none; animation: fadeIn 0.2s ease; }
+    .panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .page-title { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; margin: 0 0 4px; }
+    .page-sub { color: var(--text-secondary); margin: 0 0 24px; font-size: 14px; }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1200px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+    .stat-tile {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .stat-tile .label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .stat-tile .value { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+    .stat-tile .hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+
+    .weather-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+    .weather-card .loc { font-weight: 600; font-size: 15px; }
+    .weather-card .temp { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; color: var(--primary); }
+    .weather-card .cond { color: var(--text-secondary); font-size: 13px; }
+
+    .kanban-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 1100px) { .kanban-wrap { grid-template-columns: 1fr; } }
+    .kanban-col {
+      background: var(--surface-1);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 14px;
+      min-height: 280px;
+    }
+    .kanban-col h3 { margin: 0 0 12px; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .task-mini {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+    }
+    .task-mini:last-child { margin-bottom: 0; }
+    .task-mini strong { display: block; font-size: 13px; margin-bottom: 4px; }
+    .task-mini span { font-size: 12px; color: var(--text-secondary); }
+
+    .activity-feed {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+    .activity-feed h3 { margin: 0 0 14px; font-size: 13px; font-weight: 600; color: var(--text); }
+    .activity-row {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .activity-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .activity-row .time { color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+
+    /* Table */
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 18px;
+    }
+    .filter-input, .filter-select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      min-width: 160px;
+    }
+    .filter-input:focus, .filter-select:focus { outline: none; border-color: var(--primary); box-shadow: var(--focus-ring); }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: filter 0.15s;
+    }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-primary:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th {
+      text-align: left;
+      padding: 12px 14px;
+      background: var(--surface-1);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td { padding: 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+    .data-table tr:nth-child(even) td { background: rgba(241, 245, 249, 0.5); }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .chip-priority-yüksek { background: rgba(239, 68, 68, 0.1); color: #B91C1C; }
+    .chip-priority-orta { background: rgba(245, 158, 11, 0.12); color: #B45309; }
+    .chip-priority-düşük { background: rgba(37, 99, 235, 0.1); color: var(--primary); }
+    .chip-status-açık { background: rgba(6, 182, 212, 0.12); color: #0E7490; }
+    .chip-status-devam { background: rgba(37, 99, 235, 0.1); color: var(--primary); }
+    .chip-status-beklemede { background: rgba(148, 163, 184, 0.2); color: var(--text-secondary); }
+    .chip-status-tamam { background: rgba(34, 197, 94, 0.12); color: #15803D; }
+
+    /* Fields grid */
+    .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .field-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .field-map {
+      height: 120px;
+      background: linear-gradient(160deg, var(--surface-1) 0%, #E0E7EF 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .field-body { padding: 16px; }
+    .field-body h3 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+    .field-meta { font-size: 13px; color: var(--text-secondary); }
+    .field-meta span { display: block; margin-top: 4px; }
+
+    /* Issues */
+    .issue-list { display: flex; flex-direction: column; gap: 10px; }
+    .issue-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .issue-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--surface-1);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    .issue-body { flex: 1; min-width: 0; }
+    .issue-body h4 { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+    .issue-body p { margin: 0; font-size: 13px; color: var(--text-secondary); }
+    .issue-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+    .severity { font-weight: 600; }
+    .severity-high { color: var(--error); }
+    .severity-med { color: var(--warning); }
+    .severity-low { color: var(--text-secondary); }
+
+    /* Team */
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .person-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .person-card .avatar {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: linear-gradient(145deg, var(--secondary), var(--accent));
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .person-card h3 { margin: 0 0 4px; font-size: 15px; }
+    .person-card .role { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
+    .person-card .phone { font-size: 13px; color: var(--text); margin-bottom: 10px; }
+    .status-dot { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; }
+    .status-dot::before { content: ''; width: 8px; height: 8px; border-radius: 50%; }
+    .status-dot.is-on::before { background: var(--success); }
+    .status-dot.is-off::before { background: var(--text-muted); }
+
+    /* Equipment */
+    .eq-section { margin-bottom: 28px; }
+    .eq-section h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin: 0 0 12px; font-weight: 600; }
+    .eq-list { display: flex; flex-direction: column; gap: 8px; }
+    .eq-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+    }
+    .eq-item strong { font-size: 14px; }
+    .eq-item span { font-size: 12px; color: var(--text-secondary); display: block; }
+    .eq-status { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+    .eq-ok { background: rgba(34, 197, 94, 0.12); color: #15803D; }
+    .eq-warn { background: rgba(245, 158, 11, 0.15); color: #B45309; }
+    .eq-off { background: rgba(148, 163, 184, 0.2); color: var(--text-secondary); }
+
+    /* Settings form */
+    .settings-form {
+      max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .form-row { margin-bottom: 18px; }
+    .form-row label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    .form-row input, .form-row select, .form-row textarea {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+    }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+      outline: none; border-color: var(--primary); box-shadow: var(--focus-ring);
+    }
+    .form-row textarea { min-height: 88px; resize: vertical; }
+
+    /* ========== MOBILE ========== */
+    .mobile-layout {
+      display: none;
+      flex: 1;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 40px;
+      min-height: 0;
+    }
+    .mobile-layout.active { display: flex; }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 390px;
+      background: var(--surface);
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.04),
+        0 24px 48px -12px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 720px;
+      max-height: min(88vh, 820px);
+    }
+    .phone-notch {
+      height: 28px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .phone-notch span {
+      width: 96px;
+      height: 24px;
+      background: var(--text);
+      border-radius: 0 0 14px 14px;
+      opacity: 0.08;
+    }
+    .mobile-header {
+      padding: 12px 18px 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .mobile-header h2 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+    .mobile-header .back-btn {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      padding: 4px 0;
+      display: none;
+    }
+    .mobile-header .back-btn.visible { display: block; }
+
+    .mobile-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 88px;
+      background: var(--bg);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .m-panel { display: none; }
+    .m-panel.active { display: block; animation: fadeIn 0.15s ease; }
+
+    .m-task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .m-task-card:hover { border-color: rgba(37, 99, 235, 0.35); }
+    .m-task-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    .m-task-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+    .m-task-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .m-task-card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+    .m-task-card .field-name { font-size: 13px; color: var(--text-secondary); }
+    .m-task-bottom { display: flex; justify-content: space-between; align-items: center; }
+    .m-task-card .due { font-size: 12px; color: var(--text-muted); }
+
+    .m-detail { padding-bottom: 8px; }
+    .m-detail p { margin: 0 0 12px; font-size: 14px; color: var(--text-secondary); line-height: 1.55; }
+    .m-detail-meta { font-size: 13px; color: var(--text); margin-bottom: 20px; }
+    .m-detail-meta div { margin-bottom: 6px; }
+    .btn-pill {
+      width: 100%;
+      height: 72px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: filter 0.15s;
+    }
+    .btn-pill.secondary { background: var(--surface); color: var(--primary); border: 2px solid var(--primary); }
+    .btn-pill:hover { filter: brightness(1.06); }
+    .btn-pill:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+    .history-group { margin-bottom: 20px; }
+    .history-group h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 10px;
+    }
+    .history-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .history-item strong { display: block; margin-bottom: 4px; }
+
+    .report-cats { display: flex; flex-direction: column; gap: 10px; }
+    .cat-btn {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-align: left;
+      font-weight: 500;
+      color: var(--text);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .cat-btn:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.04); }
+    .cat-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    .cat-btn i { color: var(--primary); }
+
+    .profile-block {
+      text-align: center;
+      padding: 8px 0 20px;
+    }
+    .profile-avatar {
+      width: 88px; height: 88px;
+      border-radius: 24px;
+      margin: 0 auto 16px;
+      background: linear-gradient(145deg, var(--primary), var(--accent));
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+    }
+    .profile-block h3 { margin: 0 0 6px; font-size: 20px; }
+    .profile-block .role { color: var(--text-secondary); font-size: 14px; margin-bottom: 16px; }
+    .profile-info {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: left;
+    }
+    .profile-info row { display: block; }
+    .profile-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .profile-row:last-child { border-bottom: none; }
+    .profile-row span:first-child { color: var(--text-muted); }
+
+    .bottom-tabs {
+      height: 72px;
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: stretch;
+      flex-shrink: 0;
+    }
+    .bottom-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 8px 4px;
+      transition: color 0.15s;
+    }
+    .bottom-tab i { width: 22px; height: 22px; }
+    .bottom-tab:hover { color: var(--text-secondary); }
+    .bottom-tab:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--primary); }
+    .bottom-tab.active { color: var(--primary); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="view-toggle-bar">
+      <label>Görünüm</label>
+      <div class="toggle-group" role="tablist" aria-label="Görünüm seç">
+        <button type="button" class="toggle-btn active" data-view="desktop" id="btn-desktop">Masaüstü / Sahip</button>
+        <button type="button" class="toggle-btn" data-view="mobile" id="btn-mobile">Mobil / İşçi</button>
+      </div>
+    </div>
+
+    <!-- DESKTOP -->
+    <div class="desktop-layout active" id="desktop-layout">
+      <aside class="sidebar" aria-label="Ana menü">
+        <div class="brand">
+          <div class="brand-icon"><i data-lucide="sprout"></i></div>
+          <div>
+            <h1>Agrova</h1>
+            <span>İşletme</span>
+          </div>
+        </div>
+        <button type="button" class="nav-item active" data-tab="today"><i data-lucide="layout-dashboard"></i> Bugün</button>
+        <button type="button" class="nav-item" data-tab="tasks"><i data-lucide="list-checks"></i> Görevler</button>
+        <button type="button" class="nav-item" data-tab="fields"><i data-lucide="map"></i> Tarlalar</button>
+        <button type="button" class="nav-item" data-tab="issues"><i data-lucide="alert-circle"></i> Sorunlar</button>
+        <button type="button" class="nav-item" data-tab="team"><i data-lucide="users"></i> Ekip</button>
+        <button type="button" class="nav-item" data-tab="equipment"><i data-lucide="tractor"></i> Ekipman</button>
+        <button type="button" class="nav-item" data-tab="settings"><i data-lucide="settings"></i> Ayarlar</button>
+      </aside>
+
+      <main class="main-area">
+        <!-- Today -->
+        <section class="panel active" id="panel-today" role="tabpanel">
+          <h2 class="page-title">Bugünün özeti</h2>
+          <p class="page-sub">İstanbul bölgesi — 23 Nisan 2026</p>
+          <div class="stat-grid">
+            <div class="stat-tile"><div class="label">Açık görev</div><div class="value">47</div><div class="hint">Bu hafta +6</div></div>
+            <div class="stat-tile"><div class="label">Aktif tarla</div><div class="value">12</div><div class="hint">Tüm parseller</div></div>
+            <div class="stat-tile"><div class="label">Çevrimiçi işçi</div><div class="value">8</div><div class="hint">Şu an sahada</div></div>
+            <div class="stat-tile"><div class="label">Açık sorun</div><div class="value">3</div><div class="hint">2 orta öncelik</div></div>
+          </div>
+          <div class="weather-card">
+            <div>
+              <div class="loc">İstanbul</div>
+              <div class="cond">Güneşli, hafif rüzgar</div>
+            </div>
+            <div style="text-align:right">
+              <div class="temp">22°C</div>
+              <div class="cond">Nem %48</div>
+            </div>
+          </div>
+          <div class="kanban-wrap">
+            <div class="kanban-col">
+              <h3>Yapılacak</h3>
+              <div class="task-mini"><strong>Budama — Elma Bahçesi A3</strong><span>Mehmet Yılmaz · Yüksek</span></div>
+              <div class="task-mini"><strong>Gübreleme — Kayısı Tarlası E1</strong><span>Ayşe Kaya · Orta</span></div>
+              <div class="task-mini"><strong>Sulama — Armut Bahçesi C2</strong><span>Hüseyin Demir · Düşük</span></div>
+              <div class="task-mini"><strong>İlaçlama — Kiraz Tarlası B1</strong><span>Fatma Çelik · Yüksek</span></div>
+            </div>
+            <div class="kanban-col">
+              <h3>Devam eden</h3>
+              <div class="task-mini"><strong>Hasat — Şeftali Alanı D4</strong><span>Ali Öztürk · Orta</span></div>
+              <div class="task-mini"><strong>Ot biçme — Kiraz Tarlası B1</strong><span>Mehmet Yılmaz · Düşük</span></div>
+              <div class="task-mini"><strong>Sulama pompası bakımı</strong><span>Ayşe Kaya · Orta</span></div>
+            </div>
+            <div class="kanban-col">
+              <h3>Tamamlandı</h3>
+              <div class="task-mini"><strong>İlaçlama — Elma Bahçesi A3</strong><span>Fatma Çelik · Tamamlandı</span></div>
+              <div class="task-mini"><strong>Budama — Armut Bahçesi C2</strong><span>Hüseyin Demir · Tamamlandı</span></div>
+              <div class="task-mini"><strong>Gübreleme — Şeftali Alanı D4</strong><span>Ali Öztürk · Tamamlandı</span></div>
+              <div class="task-mini"><strong>Hasat kasası dağıtımı</strong><span>Ayşe Kaya · Tamamlandı</span></div>
+            </div>
+          </div>
+          <div class="activity-feed">
+            <h3>Son aktiviteler</h3>
+            <div class="activity-row"><span class="time">09:42</span><div><strong>Fatma Çelik</strong> Kiraz Tarlası B1’de ilaçlama kaydını tamamladı.</div></div>
+            <div class="activity-row"><span class="time">09:18</span><div><strong>Mehmet Yılmaz</strong> Elma Bahçesi A3 budama görevini başlattı.</div></div>
+            <div class="activity-row"><span class="time">08:55</span><div><strong>Sistem</strong> Yeni sorun bildirimi: sulama hattı kaçağı (Şeftali Alanı D4).</div></div>
+            <div class="activity-row"><span class="time">08:30</span><div><strong>Hüseyin Demir</strong> Çevrimiçi oldu — Kayısı Tarlası E1.</div></div>
+          </div>
+        </section>
+
+        <!-- Tasks -->
+        <section class="panel" id="panel-tasks" role="tabpanel" hidden>
+          <h2 class="page-title">Görevler</h2>
+          <p class="page-sub">Tüm tarla ve bakım işleri</p>
+          <div class="toolbar">
+            <input type="search" class="filter-input" placeholder="Görev veya tarla ara..." id="task-search" aria-label="Ara" />
+            <select class="filter-select" id="task-filter-priority" aria-label="Öncelik">
+              <option value="">Tüm öncelikler</option>
+              <option>Yüksek</option>
+              <option>Orta</option>
+              <option>Düşük</option>
+            </select>
+            <select class="filter-select" id="task-filter-status" aria-label="Durum">
+              <option value="">Tüm durumlar</option>
+              <option>Açık</option>
+              <option>Devam ediyor</option>
+              <option>Beklemede</option>
+              <option>Tamamlandı</option>
+            </select>
+            <button type="button" class="btn-primary" id="btn-new-task"><i data-lucide="plus" style="width:16px;height:16px"></i> Yeni görev</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table" id="tasks-table">
+              <thead>
+                <tr>
+                  <th>Görev</th><th>Tarla</th><th>Atanan</th><th>Öncelik</th><th>Durum</th><th>Bitiş tarihi</th>
+                </tr>
+              </thead>
+              <tbody id="tasks-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Fields -->
+        <section class="panel" id="panel-fields" role="tabpanel" hidden>
+          <h2 class="page-title">Tarlalar</h2>
+          <p class="page-sub">Parsel ve ürün özeti</p>
+          <div class="field-grid" id="field-grid"></div>
+        </section>
+
+        <!-- Issues -->
+        <section class="panel" id="panel-issues" role="tabpanel" hidden>
+          <h2 class="page-title">Bildirilen sorunlar</h2>
+          <p class="page-sub">Saha raporları ve önceliklendirme</p>
+          <div class="issue-list" id="issue-list"></div>
+        </section>
+
+        <!-- Team -->
+        <section class="panel" id="panel-team" role="tabpanel" hidden>
+          <h2 class="page-title">Ekip</h2>
+          <p class="page-sub">Saha ve ofis rolleri</p>
+          <div class="team-grid" id="team-grid"></div>
+        </section>
+
+        <!-- Equipment -->
+        <section class="panel" id="panel-equipment" role="tabpanel" hidden>
+          <h2 class="page-title">Ekipman</h2>
+          <p class="page-sub">Araçlar, aletler ve kimyasallar</p>
+          <div id="equipment-sections"></div>
+        </section>
+
+        <!-- Settings -->
+        <section class="panel" id="panel-settings" role="tabpanel" hidden>
+          <h2 class="page-title">İşletme ayarları</h2>
+          <p class="page-sub">Genel parametreler ve bildirimler</p>
+          <form class="settings-form" id="settings-form" onsubmit="return false;">
+            <div class="form-row">
+              <label for="op-name">İşletme adı</label>
+              <input type="text" id="op-name" value="Agrova Çiftliği — Kocaeli" />
+            </div>
+            <div class="form-row">
+              <label for="op-timezone">Saat dilimi</label>
+              <select id="op-timezone">
+                <option selected>Europe/Istanbul (GMT+3)</option>
+                <option>Europe/Berlin (GMT+1)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="op-units">Alan birimi</label>
+              <select id="op-units">
+                <option selected>Dekar (da)</option>
+                <option>Hektar (ha)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="op-notes">Varsayılan güvenlik notları</label>
+              <textarea id="op-notes">Kişisel koruyucu ekipman zorunludur. İlaçlama öncesi rüzgar hızı 15 km/s altında olmalıdır.</textarea>
+            </div>
+            <div class="form-row">
+              <label for="op-notify">Bildirim e-postası</label>
+              <input type="email" id="op-notify" value="yonetim@agrova.ornek.tr" />
+            </div>
+            <button type="button" class="btn-primary" id="btn-save-settings">Kaydet</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="mobile-layout" id="mobile-layout">
+      <div class="phone-frame">
+        <div class="phone-notch"><span></span></div>
+        <header class="mobile-header">
+          <button type="button" class="back-btn" id="m-back" aria-label="Geri">Geri</button>
+          <h2 id="m-header-title">Görevler</h2>
+          <span style="width:48px"></span>
+        </header>
+        <div class="mobile-content">
+          <div class="m-panel active" id="m-panel-tasks">
+            <div id="m-task-list"></div>
+          </div>
+          <div class="m-panel" id="m-panel-detail">
+            <div class="m-detail" id="m-detail-body"></div>
+          </div>
+          <div class="m-panel" id="m-panel-history">
+            <div id="m-history-body"></div>
+          </div>
+          <div class="m-panel" id="m-panel-report">
+            <p style="margin:0 0 14px;color:var(--text-secondary);font-size:14px;">Kategori seçin — ekip müdahale planlayacaktır.</p>
+            <div class="report-cats" id="report-cats"></div>
+          </div>
+          <div class="m-panel" id="m-panel-profile">
+            <div class="profile-block">
+              <div class="profile-avatar">MY</div>
+              <h3>Mehmet Yılmaz</h3>
+              <div class="role">Saha işçisi — Bahçe bakımı</div>
+              <div class="profile-info">
+                <div class="profile-row"><span>Telefon</span><span>+90 532 441 28 90</span></div>
+                <div class="profile-row"><span>Vardiya</span><span>07:00 – 16:00</span></div>
+                <div class="profile-row"><span>Ekip</span><span>Kuzey parseller</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <nav class="bottom-tabs" aria-label="Mobil sekme">
+          <button type="button" class="bottom-tab active" data-mtab="tasks"><i data-lucide="clipboard-list"></i>Görevler</button>
+          <button type="button" class="bottom-tab" data-mtab="history"><i data-lucide="history"></i>Geçmiş</button>
+          <button type="button" class="bottom-tab" data-mtab="report"><i data-lucide="alert-triangle"></i>Sorun Bildir</button>
+          <button type="button" class="bottom-tab" data-mtab="profile"><i data-lucide="user"></i>Profil</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const DESKTOP_TASKS = [
+        { task: 'Budama — Elma Bahçesi A3', field: 'Elma Bahçesi A3', assignee: 'Mehmet Yılmaz', priority: 'Yüksek', status: 'Açık', due: '25.04.2026' },
+        { task: 'İlaçlama — Kiraz Tarlası B1', field: 'Kiraz Tarlası B1', assignee: 'Fatma Çelik', priority: 'Yüksek', status: 'Devam ediyor', due: '24.04.2026' },
+        { task: 'Sulama — Armut Bahçesi C2', field: 'Armut Bahçesi C2', assignee: 'Hüseyin Demir', priority: 'Düşük', status: 'Beklemede', due: '26.04.2026' },
+        { task: 'Gübreleme — Kayısı Tarlası E1', field: 'Kayısı Tarlası E1', assignee: 'Ayşe Kaya', priority: 'Orta', status: 'Açık', due: '27.04.2026' },
+        { task: 'Hasat — Şeftali Alanı D4', field: 'Şeftali Alanı D4', assignee: 'Ali Öztürk', priority: 'Orta', status: 'Devam ediyor', due: '23.04.2026' },
+        { task: 'Ot biçme — Kiraz Tarlası B1', field: 'Kiraz Tarlası B1', assignee: 'Mehmet Yılmaz', priority: 'Düşük', status: 'Tamamlandı', due: '22.04.2026' },
+        { task: 'Sulama — Şeftali Alanı D4', field: 'Şeftali Alanı D4', assignee: 'Ayşe Kaya', priority: 'Orta', status: 'Açık', due: '24.04.2026' },
+        { task: 'İlaçlama — Elma Bahçesi A3', field: 'Elma Bahçesi A3', assignee: 'Fatma Çelik', priority: 'Yüksek', status: 'Tamamlandı', due: '21.04.2026' },
+        { task: 'Gübreleme — Armut Bahçesi C2', field: 'Armut Bahçesi C2', assignee: 'Hüseyin Demir', priority: 'Orta', status: 'Devam ediyor', due: '25.04.2026' },
+        { task: 'Hasat — Kayısı Tarlası E1', field: 'Kayısı Tarlası E1', assignee: 'Ali Öztürk', priority: 'Orta', status: 'Beklemede', due: '28.04.2026' },
+      ];
+
+      const FIELDS = [
+        { name: 'Elma Bahçesi A3', area: '42 da', crop: 'Elma (Golden)', map: 'Parsel A3' },
+        { name: 'Kiraz Tarlası B1', area: '38 da', crop: 'Kiraz (Napolyon)', map: 'Parsel B1' },
+        { name: 'Armut Bahçesi C2', area: '35 da', crop: 'Armut (Deveci)', map: 'Parsel C2' },
+        { name: 'Şeftali Alanı D4', area: '29 da', crop: 'Şeftali (Bursa)', map: 'Parsel D4' },
+        { name: 'Kayısı Tarlası E1', area: '44 da', crop: 'Kayısı (Hasanbey)', map: 'Parsel E1' },
+      ];
+
+      const ISSUES = [
+        { icon: 'droplet', title: 'Sulama hattı kaçağı', desc: 'Şeftali Alanı D4 ana hatta düşük basınç.', severity: 'Yüksek', reporter: 'Ayşe Kaya', date: '23.04.2026' },
+        { icon: 'bug', title: 'Zararlı yoğunluğu', desc: 'Kiraz Tarlası B1 yaprak örneklemesinde yoğunluk.', severity: 'Orta', reporter: 'Fatma Çelik', date: '22.04.2026' },
+        { icon: 'battery-warning', title: 'Traktör akü zayıf', desc: 'John Deere sabah marşta gecikme.', severity: 'Orta', reporter: 'Mehmet Yılmaz', date: '22.04.2026' },
+        { icon: 'fence', title: 'Çit hasarı', desc: 'Kayısı Tarlası E1 kuzey çit direği eğik.', severity: 'Düşük', reporter: 'Hüseyin Demir', date: '21.04.2026' },
+        { icon: 'cloud-rain', title: 'Yağmur sonrası su birikintisi', desc: 'Armut Bahçesi C2 drenaj yavaş.', severity: 'Orta', reporter: 'Ali Öztürk', date: '20.04.2026' },
+      ];
+
+      const TEAM = [
+        { name: 'Mehmet Yılmaz', role: 'Saha şefi', phone: '+90 532 441 28 90', initials: 'MY', status: 'aktif' },
+        { name: 'Ayşe Kaya', role: 'Sulama koordinatörü', phone: '+90 533 102 77 44', initials: 'AK', status: 'aktif' },
+        { name: 'Hüseyin Demir', role: 'Makine operatörü', phone: '+90 534 908 11 22', initials: 'HD', status: 'çevrimdışı' },
+        { name: 'Fatma Çelik', role: 'İlaçlama uzmanı', phone: '+90 535 661 90 01', initials: 'FÇ', status: 'aktif' },
+        { name: 'Ali Öztürk', role: 'Hasat ekibi', phone: '+90 536 220 45 67', initials: 'AÖ', status: 'aktif' },
+      ];
+
+      const EQUIPMENT = {
+        'Araçlar': [
+          { name: 'Traktör (John Deere)', sub: '5090M — 2021', status: 'Çalışır', type: 'ok' },
+          { name: 'Hasat Kasası', sub: 'Römork — 3 ton', status: 'Sahada', type: 'ok' },
+        ],
+        'Aletler': [
+          { name: 'İlaçlama Makinesi', sub: '400 L tank', status: 'Bakımda', type: 'warn' },
+          { name: 'Sulama Pompası', sub: 'Elektrik 5.5 kW', status: 'Çalışır', type: 'ok' },
+        ],
+        'Kimyasallar': [
+          { name: 'Fungisit stok', sub: 'Depo A — raf 2', status: 'Yeterli', type: 'ok' },
+          { name: 'İnsektisit stok', sub: 'Depo B — son kullanma kontrol', status: 'Azaldı', type: 'warn' },
+        ],
+      };
+
+      const MOBILE_TASKS = [
+        { id: 'm1', activity: 'Budama', field: 'Elma Bahçesi A3', priority: 'Yüksek', due: '25 Nis 2026', icon: 'scissors', desc: 'Elma ağaçlarında kış budaması devamı. Dal dengesi ve havalandırma için orta gövde kesimi.' },
+        { id: 'm2', activity: 'İlaçlama', field: 'Kiraz Tarlası B1', priority: 'Yüksek', due: '24 Nis 2026', icon: 'spray-can', desc: 'Monilinia dönemine göre uygulama. Rüzgar hızı kayıtlı; PPE zorunlu.' },
+        { id: 'm3', activity: 'Sulama', field: 'Armut Bahçesi C2', priority: 'Düşük', due: '26 Nis 2026', icon: 'droplets', desc: 'Damla sulama hatları kontrolü sonrası 45 dk sulama programı.' },
+        { id: 'm4', activity: 'Gübreleme', field: 'Kayısı Tarlası E1', priority: 'Orta', due: '27 Nis 2026', icon: 'leaf', desc: 'Toprak analizine göre NPK dengesi; kenar şeritlerde azaltılmış doz.' },
+        { id: 'm5', activity: 'Hasat', field: 'Şeftali Alanı D4', priority: 'Orta', due: '23 Nis 2026', icon: 'apple', desc: 'Erkenci şeftali seçimi; kasalara hasat tarihi etiketi.' },
+        { id: 'm6', activity: 'Ot biçme', field: 'Kiraz Tarlası B1', priority: 'Düşük', due: '24 Nis 2026', icon: 'fan', desc: 'Sıra arası çimleyici ile çalışma; taşlı bölge yavaş mod.' },
+      ];
+
+      const HISTORY_GROUPS = [
+        {
+          date: '22 Nisan 2026',
+          items: [
+            { title: 'İlaçlama — Elma Bahçesi A3', sub: 'Tamamlandı · Fatma Çelik' },
+            { title: 'Sulama — Şeftali Alanı D4', sub: 'Tamamlandı · Ayşe Kaya' },
+          ],
+        },
+        {
+          date: '21 Nisan 2026',
+          items: [
+            { title: 'Gübreleme — Armut Bahçesi C2', sub: 'Tamamlandı · Hüseyin Demir' },
+            { title: 'Budama — Kayısı Tarlası E1', sub: 'Tamamlandı · Mehmet Yılmaz' },
+          ],
+        },
+        {
+          date: '20 Nisan 2026',
+          items: [
+            { title: 'Hasat kasası teslimi', sub: 'Tamamlandı · Ali Öztürk' },
+          ],
+        },
+      ];
+
+      const REPORT_CATEGORIES = [
+        { id: 'sulama', label: 'Sulama arızası', icon: 'droplet' },
+        { id: 'hasar', label: 'Ekipman hasarı', icon: 'wrench' },
+        { id: 'zararlı', label: 'Zararlı / hastalık', icon: 'bug' },
+        { id: 'çit', label: 'Çit / yapı', icon: 'fence' },
+        { id: 'hava', label: 'Hava / sel', icon: 'cloud-rain' },
+        { id: 'güvenlik', label: 'Güvenlik', icon: 'shield-alert' },
+        { id: 'diğer', label: 'Diğer', icon: 'more-horizontal' },
+      ];
+
+      function priorityClass(p) {
+        const k = p.toLowerCase();
+        if (k === 'yüksek') return 'chip-priority-yüksek';
+        if (k === 'orta') return 'chip-priority-orta';
+        return 'chip-priority-düşük';
+      }
+
+      function statusClass(s) {
+        const k = s.toLowerCase();
+        if (k.includes('açık')) return 'chip-status-açık';
+        if (k.includes('devam')) return 'chip-status-devam';
+        if (k.includes('bekleme')) return 'chip-status-beklemede';
+        return 'chip-status-tamam';
+      }
+
+      function escapeHtml(s) {
+        const d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      function renderFields() {
+        document.getElementById('field-grid').innerHTML = FIELDS.map(function (f) {
+          return (
+            '<article class="field-card"><div class="field-map"><i data-lucide="map-pin" style="width:20px;height:20px;margin-right:8px;vertical-align:middle"></i> ' +
+            escapeHtml(f.map) + ' — harita önizleme</div><div class="field-body"><h3>' + escapeHtml(f.name) + '</h3>' +
+            '<div class="field-meta"><span><strong>' + escapeHtml(f.area) + '</strong> · ' + escapeHtml(f.crop) + '</span></div></div></article>'
+          );
+        }).join('');
+      }
+
+      function renderIssues() {
+        function issueSeverityClass(sev) {
+          if (sev === 'Yüksek') return 'severity-high';
+          if (sev === 'Orta') return 'severity-med';
+          return 'severity-low';
+        }
+        document.getElementById('issue-list').innerHTML = ISSUES.map(function (i) {
+          return (
+            '<div class="issue-row"><div class="issue-icon"><i data-lucide="' + escapeHtml(i.icon) + '"></i></div><div class="issue-body">' +
+            '<h4>' + escapeHtml(i.title) + '</h4><p>' + escapeHtml(i.desc) + '</p>' +
+            '<div class="issue-meta"><span class="severity ' + issueSeverityClass(i.severity) + '">' + escapeHtml(i.severity) + '</span>' +
+            '<span>' + escapeHtml(i.reporter) + '</span><span>' + escapeHtml(i.date) + '</span></div></div></div>'
+          );
+        }).join('');
+      }
+
+      function renderTeam() {
+        document.getElementById('team-grid').innerHTML = TEAM.map(function (p) {
+          const st = p.status === 'aktif' ? 'is-on' : 'is-off';
+          const label = p.status === 'aktif' ? 'Aktif' : 'Çevrimdışı';
+          return (
+            '<article class="person-card"><div class="avatar">' + escapeHtml(p.initials) + '</div><h3>' + escapeHtml(p.name) + '</h3>' +
+            '<div class="role">' + escapeHtml(p.role) + '</div><div class="phone">' + escapeHtml(p.phone) + '</div>' +
+            '<div class="status-dot ' + st + '">' + label + '</div></article>'
+          );
+        }).join('');
+      }
+
+      function renderEquipment() {
+        let html = '';
+        for (var cat in EQUIPMENT) {
+          if (!Object.prototype.hasOwnProperty.call(EQUIPMENT, cat)) continue;
+          html += '<div class="eq-section"><h3>' + escapeHtml(cat) + '</h3><div class="eq-list">';
+          EQUIPMENT[cat].forEach(function (e) {
+            var cls = e.type === 'ok' ? 'eq-ok' : e.type === 'warn' ? 'eq-warn' : 'eq-off';
+            html += '<div class="eq-item"><div><strong>' + escapeHtml(e.name) + '</strong><span>' + escapeHtml(e.sub) + '</span></div>' +
+              '<span class="eq-status ' + cls + '">' + escapeHtml(e.status) + '</span></div>';
+          });
+          html += '</div></div>';
+        }
+        document.getElementById('equipment-sections').innerHTML = html;
+      }
+
+      function renderMobileTaskList() {
+        document.getElementById('m-task-list').innerHTML = MOBILE_TASKS.map(function (t) {
+          return (
+            '<button type="button" class="m-task-card" data-task-id="' + escapeHtml(t.id) + '">' +
+            '<div class="m-task-top"><div class="m-task-icon"><i data-lucide="' + escapeHtml(t.icon) + '"></i></div><div style="flex:1">' +
+            '<h3>' + escapeHtml(t.activity) + '</h3><div class="field-name">' + escapeHtml(t.field) + '</div></div></div>' +
+            '<div class="m-task-bottom"><span class="chip ' + priorityClass(t.priority) + '">' + escapeHtml(t.priority) + '</span><span class="due">' + escapeHtml(t.due) + '</span></div></button>'
+          );
+        }).join('');
+      }
+
+      function renderHistory() {
+        document.getElementById('m-history-body').innerHTML = HISTORY_GROUPS.map(function (g) {
+          return (
+            '<div class="history-group"><h4>' + escapeHtml(g.date) + '</h4>' +
+            g.items.map(function (it) {
+              return '<div class="history-item"><strong>' + escapeHtml(it.title) + '</strong><span style="display:block;margin-top:6px;font-size:13px;color:var(--text-secondary);font-weight:500">' + escapeHtml(it.sub) + '</span></div>';
+            }).join('') + '</div>'
+          );
+        }).join('');
+      }
+
+      function renderReportCats() {
+        document.getElementById('report-cats').innerHTML = REPORT_CATEGORIES.map(function (c) {
+          return (
+            '<button type="button" class="cat-btn" data-cat="' + escapeHtml(c.id) + '"><i data-lucide="' + escapeHtml(c.icon) + '"></i> ' + escapeHtml(c.label) + '</button>'
+          );
+        }).join('');
+      }
+
+      // Desktop tab switching
+      var desktopTab = 'today';
+      function setDesktopTab(id) {
+        desktopTab = id;
+        document.querySelectorAll('.nav-item').forEach(function (b) {
+          b.classList.toggle('active', b.getAttribute('data-tab') === id);
+        });
+        document.querySelectorAll('.main-area .panel').forEach(function (p) {
+          var panelId = 'panel-' + id;
+          var isMatch = p.id === panelId;
+          p.classList.toggle('active', isMatch);
+          if (isMatch) p.removeAttribute('hidden'); else p.setAttribute('hidden', '');
+        });
+        lucide.createIcons();
+      }
+
+      document.querySelectorAll('.nav-item').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          setDesktopTab(btn.getAttribute('data-tab'));
+        });
+      });
+
+      // View toggle
+      function setView(view) {
+        document.getElementById('btn-desktop').classList.toggle('active', view === 'desktop');
+        document.getElementById('btn-mobile').classList.toggle('active', view === 'mobile');
+        document.getElementById('desktop-layout').classList.toggle('active', view === 'desktop');
+        document.getElementById('mobile-layout').classList.toggle('active', view === 'mobile');
+        if (view === 'mobile') {
+          lucide.createIcons();
+        }
+      }
+      document.getElementById('btn-desktop').addEventListener('click', function () { setView('desktop'); });
+      document.getElementById('btn-mobile').addEventListener('click', function () { setView('mobile'); });
+
+      // Task table filter (client-side)
+      function applyTaskFilters() {
+        var q = (document.getElementById('task-search').value || '').toLowerCase();
+        var pr = document.getElementById('task-filter-priority').value;
+        var st = document.getElementById('task-filter-status').value;
+        var rows = DESKTOP_TASKS.filter(function (r) {
+          var matchQ = !q || r.task.toLowerCase().indexOf(q) !== -1 || r.field.toLowerCase().indexOf(q) !== -1;
+          var matchP = !pr || r.priority === pr;
+          var matchS = !st || r.status === st;
+          return matchQ && matchP && matchS;
+        });
+        var tbody = document.getElementById('tasks-tbody');
+        tbody.innerHTML = rows.length ? rows.map(function (r) {
+          return (
+            '<tr><td><strong>' + escapeHtml(r.task) + '</strong></td><td>' + escapeHtml(r.field) + '</td><td>' + escapeHtml(r.assignee) + '</td>' +
+            '<td><span class="chip ' + priorityClass(r.priority) + '">' + escapeHtml(r.priority) + '</span></td>' +
+            '<td><span class="chip ' + statusClass(r.status) + '">' + escapeHtml(r.status) + '</span></td><td>' + escapeHtml(r.due) + '</td></tr>'
+          );
+        }).join('') : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Sonuç bulunamadı.</td></tr>';
+      }
+      document.getElementById('task-search').addEventListener('input', applyTaskFilters);
+      document.getElementById('task-filter-priority').addEventListener('change', applyTaskFilters);
+      document.getElementById('task-filter-status').addEventListener('change', applyTaskFilters);
+
+      document.getElementById('btn-new-task').addEventListener('click', function () {
+        alert('Yeni görev (örnek): Form bu prototipte açılmaz; üretimde modal açılır.');
+      });
+      document.getElementById('btn-save-settings').addEventListener('click', function () {
+        alert('Ayarlar kaydedildi (prototip).');
+      });
+
+      // Mobile state
+      var mobileMainTab = 'tasks';
+      var mobileShowingDetail = false;
+
+      function getTaskById(id) {
+        for (var i = 0; i < MOBILE_TASKS.length; i++) {
+          if (MOBILE_TASKS[i].id === id) return MOBILE_TASKS[i];
+        }
+        return null;
+      }
+
+      function setMobileHeader(title, showBack) {
+        document.getElementById('m-header-title').textContent = title;
+        var back = document.getElementById('m-back');
+        if (showBack) back.classList.add('visible'); else back.classList.remove('visible');
+      }
+
+      function showMobileTab(tab) {
+        mobileMainTab = tab;
+        mobileShowingDetail = false;
+        document.querySelectorAll('.bottom-tab').forEach(function (b) {
+          b.classList.toggle('active', b.getAttribute('data-mtab') === tab);
+        });
+        document.getElementById('m-panel-tasks').classList.toggle('active', tab === 'tasks');
+        document.getElementById('m-panel-tasks').classList.toggle('hidden', tab !== 'tasks');
+        document.getElementById('m-panel-history').classList.toggle('active', tab === 'history');
+        document.getElementById('m-panel-history').classList.toggle('hidden', tab !== 'history');
+        document.getElementById('m-panel-report').classList.toggle('active', tab === 'report');
+        document.getElementById('m-panel-report').classList.toggle('hidden', tab !== 'report');
+        document.getElementById('m-panel-profile').classList.toggle('active', tab === 'profile');
+        document.getElementById('m-panel-profile').classList.toggle('hidden', tab !== 'profile');
+        document.getElementById('m-panel-detail').classList.remove('active');
+        document.getElementById('m-panel-detail').classList.add('hidden');
+        var titles = { tasks: 'Görevler', history: 'Geçmiş', report: 'Sorun Bildir', profile: 'Profil' };
+        setMobileHeader(titles[tab] || 'Agrova', false);
+        lucide.createIcons();
+      }
+
+      function showTaskDetail(task) {
+        mobileShowingDetail = true;
+        document.getElementById('m-panel-tasks').classList.remove('active');
+        document.getElementById('m-panel-tasks').classList.add('hidden');
+        document.getElementById('m-panel-detail').classList.add('active');
+        document.getElementById('m-panel-detail').classList.remove('hidden');
+        document.getElementById('m-header-title').textContent = task.activity;
+        document.getElementById('m-back').classList.add('visible');
+        document.getElementById('m-detail-body').innerHTML =
+          '<p>' + escapeHtml(task.desc) + '</p>' +
+          '<div class="m-detail-meta"><div><strong>Tarla:</strong> ' + escapeHtml(task.field) + '</div>' +
+          '<div><strong>Öncelik:</strong> ' + escapeHtml(task.priority) + '</div><div><strong>Bitiş:</strong> ' + escapeHtml(task.due) + '</div></div>' +
+          '<button type="button" class="btn-pill" id="btn-start"><i data-lucide="play" style="width:22px;height:22px"></i> Başlat</button>' +
+          '<button type="button" class="btn-pill secondary" id="btn-complete"><i data-lucide="check" style="width:22px;height:22px"></i> Tamamla</button>';
+        document.getElementById('btn-start').addEventListener('click', function () {
+          alert('Görev başlatıldı (prototip): ' + task.activity);
+        });
+        document.getElementById('btn-complete').addEventListener('click', function () {
+          alert('Görev tamamlandı (prototip): ' + task.activity);
+          backFromDetail();
+        });
+        lucide.createIcons();
+      }
+
+      function backFromDetail() {
+        mobileShowingDetail = false;
+        document.getElementById('m-panel-detail').classList.remove('active');
+        document.getElementById('m-panel-detail').classList.add('hidden');
+        document.getElementById('m-panel-tasks').classList.add('active');
+        document.getElementById('m-panel-tasks').classList.remove('hidden');
+        setMobileHeader('Görevler', false);
+        document.querySelectorAll('.bottom-tab').forEach(function (b) {
+          b.classList.toggle('active', b.getAttribute('data-mtab') === 'tasks');
+        });
+        lucide.createIcons();
+      }
+
+      document.getElementById('m-back').addEventListener('click', function () {
+        if (mobileShowingDetail) backFromDetail();
+      });
+
+      document.getElementById('m-task-list').addEventListener('click', function (e) {
+        var card = e.target.closest('.m-task-card');
+        if (!card) return;
+        var id = card.getAttribute('data-task-id');
+        var task = getTaskById(id);
+        if (task) showTaskDetail(task);
+      });
+
+      document.querySelectorAll('.bottom-tab').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (mobileShowingDetail) backFromDetail();
+          showMobileTab(b.getAttribute('data-mtab'));
+        });
+      });
+
+      document.getElementById('report-cats').addEventListener('click', function (e) {
+        var btn = e.target.closest('.cat-btn');
+        if (!btn) return;
+        var cat = btn.getAttribute('data-cat');
+        alert('Kategori seçildi (prototip): ' + cat);
+      });
+
+      // Init
+      applyTaskFilters();
+      renderFields();
+      renderIssues();
+      renderTeam();
+      renderEquipment();
+      renderMobileTaskList();
+      renderHistory();
+      renderReportCats();
+      setDesktopTab('today');
+      setView('desktop');
+      lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

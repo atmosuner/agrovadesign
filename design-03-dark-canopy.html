@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agrova — Dark Canopy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #22C55E;
+      --color-secondary: #4ADE80;
+      --color-accent: #A3E635;
+      --color-bg: #0A0F0D;
+      --color-surface: #141B18;
+      --color-surface-1: #1B2420;
+      --color-surface-2: #232D28;
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-border-hover: rgba(255, 255, 255, 0.15);
+      --text-primary: #F0F3F0;
+      --text-secondary: #A8B5AD;
+      --text-muted: #6B7A72;
+      --color-success: #22C55E;
+      --color-warning: #FBBF24;
+      --color-error: #EF4444;
+      --glow: 0 0 20px rgba(34, 197, 94, 0.35), 0 0 40px rgba(34, 197, 94, 0.1);
+      --glow-soft: 0 0 12px rgba(34, 197, 94, 0.2);
+      --radius: 12px;
+      --radius-pill: 999px;
+      --font: "Inter", system-ui, sans-serif;
+      --font-mono: ui-monospace, "Cascadia Code", "Consolas", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--color-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: linear-gradient(180deg, #101815 0%, var(--color-bg) 100%);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #15803D 100%);
+      box-shadow: var(--glow-soft);
+      display: grid;
+      place-items: center;
+    }
+
+    .mode-toggle {
+      display: flex;
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .mode-toggle button {
+      font-family: var(--font);
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    .mode-toggle button.is-active {
+      color: var(--color-bg);
+      background: var(--color-primary);
+      box-shadow: var(--glow-soft);
+    }
+
+    .mode-toggle button:hover:not(.is-active) {
+      color: var(--text-primary);
+    }
+
+    /* Layout shell */
+    .layout {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Desktop sidebar */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, rgba(20, 27, 24, 0.95) 0%, rgba(10, 15, 13, 0.98) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid var(--color-border);
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      padding: 12px 12px 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .nav-item i,
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .nav-item:hover {
+      background: var(--color-surface-1);
+      color: var(--text-primary);
+    }
+
+    .nav-item.is-active {
+      color: var(--color-primary);
+      background: rgba(34, 197, 94, 0.08);
+      border-color: rgba(34, 197, 94, 0.25);
+      box-shadow: inset 3px 0 0 var(--color-primary);
+    }
+
+    .main {
+      flex: 1;
+      overflow: auto;
+      padding: 24px;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.is-visible {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .panel-sub {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    /* Stat tiles */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1100px) {
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .stat-tile {
+      background: linear-gradient(145deg, var(--color-surface-1) 0%, var(--color-surface) 100%);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--glow);
+    }
+
+    .stat-tile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .stat-tile .val {
+      font-size: 1.75rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-family: var(--font-mono);
+      color: var(--color-primary);
+    }
+
+    .stat-tile .lbl {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .dashboard-row {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 1000px) {
+      .dashboard-row { grid-template-columns: 1fr; }
+    }
+
+    .weather {
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .weather::before {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -20%;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
+    }
+
+    .weather h3 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .weather .loc { font-size: 1.1rem; font-weight: 600; }
+    .weather .temp { font-size: 2rem; font-weight: 700; color: var(--color-secondary); font-family: var(--font-mono); }
+
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .kanban { grid-template-columns: 1fr; }
+    }
+
+    .kan-col h4 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      padding-left: 4px;
+    }
+
+    .kan-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-card {
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+    }
+
+    .task-card strong { display: block; margin-bottom: 6px; }
+    .task-card span { color: var(--text-muted); font-size: 0.75rem; }
+
+    .activity-feed {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      max-height: 320px;
+      overflow: auto;
+    }
+
+    .activity-feed h3 {
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.8rem;
+    }
+
+    .activity-item:last-child { border-bottom: none; }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      margin-top: 5px;
+      box-shadow: 0 0 8px var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    /* Table */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 0.85rem;
+    }
+
+    .filter-bar input:focus,
+    .filter-bar select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: #04210f;
+      box-shadow: var(--glow);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 24px rgba(34, 197, 94, 0.5);
+    }
+
+    .table-wrap {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #0D1210;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    thead {
+      background: var(--color-surface-2);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    tbody tr:hover {
+      background: rgba(34, 197, 94, 0.04);
+    }
+
+    .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+    .chip {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .chip-high { background: rgba(239, 68, 68, 0.15); color: #FCA5A5; }
+    .chip-med { background: rgba(251, 191, 36, 0.15); color: #FCD34D; }
+    .chip-low { background: rgba(34, 197, 94, 0.12); color: var(--color-secondary); }
+    .chip-todo { background: rgba(107, 122, 114, 0.25); color: var(--text-secondary); }
+    .chip-doing { background: rgba(34, 197, 94, 0.15); color: var(--color-primary); }
+    .chip-done { background: rgba(163, 230, 53, 0.12); color: var(--color-accent); }
+
+    /* Field cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .field-card {
+      background: linear-gradient(180deg, var(--color-surface-1) 0%, var(--color-surface) 100%);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .field-card .map-ph {
+      height: 120px;
+      background:
+        linear-gradient(135deg, #1a2e22 0%, #0f1814 100%),
+        repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(34, 197, 94, 0.04) 8px, rgba(34, 197, 94, 0.04) 9px);
+      border-bottom: 1px solid var(--color-border);
+      position: relative;
+    }
+
+    .map-ph::after {
+      content: "";
+      position: absolute;
+      inset: 20%;
+      border: 1px dashed rgba(34, 197, 94, 0.3);
+      border-radius: 4px;
+    }
+
+    .field-body { padding: 16px; }
+    .field-body h3 { font-size: 1rem; margin-bottom: 8px; }
+    .field-meta { font-size: 0.8rem; color: var(--text-secondary); }
+    .field-meta .mono { color: var(--color-primary); }
+
+    /* Issues */
+    .issue-card {
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      border-left: 3px solid var(--color-primary);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .issue-card.critical { border-left-color: var(--color-error); }
+    .issue-card.warn { border-left-color: var(--color-warning); }
+
+    .sev {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sev-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .sev-dot.err { background: var(--color-error); box-shadow: 0 0 8px var(--color-error); }
+    .sev-dot.wrn { background: var(--color-warning); }
+    .sev-dot.ok  { background: var(--color-primary); }
+
+    /* Team */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .person {
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      background: linear-gradient(135deg, var(--color-surface-2), var(--color-primary));
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .online {
+      position: relative;
+    }
+
+    .online::after {
+      content: "";
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 12px;
+      height: 12px;
+      background: var(--color-primary);
+      border: 2px solid var(--color-surface-1);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--color-primary);
+    }
+
+    .person .role { color: var(--text-muted); font-size: 0.8rem; }
+
+    /* Equipment */
+    .eq-section h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 20px 0 12px;
+    }
+
+    .eq-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+
+    /* Settings */
+    .form-grid {
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      color: var(--text-primary);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-family: var(--font);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .switch {
+      width: 44px;
+      height: 24px;
+      background: var(--color-surface-2);
+      border-radius: 12px;
+      position: relative;
+      border: 1px solid var(--color-border);
+    }
+
+    .switch::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      top: 2px;
+      left: 3px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .switch.on {
+      background: rgba(34, 197, 94, 0.25);
+      border-color: var(--color-primary);
+    }
+
+    .switch.on::after {
+      left: 21px;
+      background: var(--color-primary);
+      box-shadow: var(--glow-soft);
+    }
+
+    /* Mobile hidden */
+    .view-desktop { display: flex; flex: 1; min-height: 0; }
+    .view-mobile { display: none; }
+
+    body.mode-mobile .view-desktop { display: none; }
+    body.mode-mobile .view-mobile { display: flex; }
+
+    .mobile-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 12px 0;
+      background: #060908;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 390px;
+      min-height: 720px;
+      background: var(--color-bg);
+      border: 3px solid #2a3330;
+      border-radius: 32px;
+      box-shadow: 0 0 0 1px var(--color-border), 0 24px 80px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .notch {
+      height: 28px;
+      display: flex;
+      justify-content: center;
+      padding-top: 8px;
+    }
+
+    .notch-bar {
+      width: 100px;
+      height: 24px;
+      background: #1a1f1c;
+      border-radius: 12px;
+    }
+
+    .m-header {
+      padding: 8px 16px 4px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .m-content {
+      flex: 1;
+      overflow: auto;
+      padding: 12px 16px 8px;
+    }
+
+    .m-bottom {
+      height: 72px;
+      flex-shrink: 0;
+      display: flex;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface);
+    }
+
+    .m-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: var(--font);
+    }
+
+    .m-tab i,
+    .m-tab svg { width: 22px; height: 22px; }
+
+    .m-tab.is-active {
+      color: var(--color-primary);
+    }
+
+    .m-tab.is-active svg {
+      filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.6));
+    }
+
+    .m-screen { display: none; }
+    .m-screen.is-visible { display: block; }
+
+    .m-card {
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .m-card h4 { font-size: 0.9rem; margin-bottom: 4px; }
+    .m-card p { font-size: 0.75rem; color: var(--text-secondary); }
+
+    .m-pill {
+      width: 100%;
+      height: 72px;
+      border-radius: var(--radius-pill);
+      border: none;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .m-pill-primary {
+      background: var(--color-primary);
+      color: #041208;
+      box-shadow: 0 0 24px rgba(34, 197, 94, 0.45);
+    }
+
+    .m-pill-ghost {
+      background: var(--color-surface-2);
+      color: var(--text-primary);
+      border: 1px solid var(--color-border);
+    }
+
+    .m-detail-meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: 8px 0 16px;
+    }
+
+    .m-back {
+      background: none;
+      border: none;
+      color: var(--color-primary);
+      font-size: 0.85rem;
+      font-family: var(--font);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .cat-btn {
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px;
+      background: var(--color-surface-1);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-family: var(--font);
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .cat-btn:hover { border-color: var(--color-border-hover); }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 32px 16px;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body class="mode-desktop">
+  <div class="app">
+    <header class="top-bar">
+      <div class="logo">
+        <div class="logo-mark"><i data-lucide="leaf" class="lucide-icon" style="width:18px;height:18px;color:#0a0f0d"></i></div>
+        <span>Agrova</span>
+      </div>
+      <div class="mode-toggle" role="group" aria-label="Görünüm">
+        <button type="button" id="btn-desktop" class="is-active" data-mode="desktop">Masaüstü / İşveren</button>
+        <button type="button" id="btn-mobile" data-mode="mobile">Mobil / İşçi</button>
+      </div>
+    </header>
+
+    <div class="view-desktop">
+      <div class="layout">
+        <aside class="sidebar" id="sidebar">
+          <span class="sidebar-label">Navigasyon</span>
+          <div class="nav-item is-active" data-panel="dashboard"><i data-lucide="layout-dashboard"></i> Bugün</div>
+          <div class="nav-item" data-panel="tasks"><i data-lucide="list-todo"></i> Görevler</div>
+          <div class="nav-item" data-panel="fields"><i data-lucide="map"></i> Tarlalar</div>
+          <div class="nav-item" data-panel="issues"><i data-lucide="alert-triangle"></i> Sorunlar</div>
+          <div class="nav-item" data-panel="team"><i data-lucide="users"></i> Ekip</div>
+          <div class="nav-item" data-panel="equipment"><i data-lucide="tractor"></i> Ekipman</div>
+          <div class="nav-item" data-panel="settings"><i data-lucide="settings"></i> Ayarlar</div>
+        </aside>
+
+        <main class="main" id="main">
+          <section class="panel is-visible" id="panel-dashboard">
+            <h1 class="panel-title">Bugünün özeti</h1>
+            <p class="panel-sub">Arazi operasyonlarınız ve ekip durumu — Dark Canopy teması</p>
+            <div class="stat-grid">
+              <div class="stat-tile"><div class="val">47</div><div class="lbl">Açık görev</div></div>
+              <div class="stat-tile"><div class="val">12</div><div class="lbl">Aktif parsel</div></div>
+              <div class="stat-tile"><div class="val">8</div><div class="lbl">Çevrimiçi işçi</div></div>
+              <div class="stat-tile"><div class="val">3</div><div class="lbl">Açık sorun</div></div>
+            </div>
+            <div class="dashboard-row">
+              <div>
+                <h2 class="panel-sub" style="margin:0 0 12px;font-size:0.85rem;">Kanban</h2>
+                <div class="kanban">
+                  <div class="kan-col">
+                    <h4>Yapılacak</h4>
+                    <ul>
+                      <li class="task-card"><strong>Kiraz Tarlası B1 — Budama</strong><span>Mehmet Yılmaz</span></li>
+                      <li class="task-card"><strong>Elma Bahçesi A3 — İlaçlama</strong><span>Ayşe Kaya</span></li>
+                      <li class="task-card"><strong>Armut Bahçesi C2 — Sulama</strong><span>Hüseyin Demir</span></li>
+                    </ul>
+                  </div>
+                  <div class="kan-col">
+                    <h4>Devam ediyor</h4>
+                    <ul>
+                      <li class="task-card"><strong>Şeftali Alanı D4 — Gübreleme</strong><span>Fatma Çelik</span></li>
+                      <li class="task-card"><strong>Kayısı Tarlası E1 — Hasat</strong><span>Ali Öztürk</span></li>
+                    </ul>
+                  </div>
+                  <div class="kan-col">
+                    <h4>Tamamlandı</h4>
+                    <ul>
+                      <li class="task-card"><strong>Elma Bahçesi A3 — Hasat (kısmi)</strong><span>Mehmet Yılmaz</span></li>
+                      <li class="task-card"><strong>Kiraz Tarlası B1 — Ot biçme</strong><span>Ayşe Kaya</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="weather">
+                <h3>Hava</h3>
+                <div class="loc">İstanbul</div>
+                <div class="temp mono">22°C</div>
+                <p style="margin-top:8px;font-size:0.8rem;color:var(--text-secondary);">Kısmen bulutlu · Rüzgar 12 km/s</p>
+              </div>
+            </div>
+            <h2 class="panel-sub" style="margin-top:20px">Son aktiviteler</h2>
+            <div class="activity-feed" style="max-height:none">
+              <h3>Canlı akış</h3>
+              <div class="activity-item"><div class="activity-dot"></div><div>Ayşe Kaya, <em>Elma Bahçesi A3</em> alanında <strong>İlaçlama</strong> kaydı oluşturdu. <span class="mono" style="color:var(--text-muted)">10:32</span></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:var(--color-accent)"></div><div>Ali Öztürk, <em>Kayısı Tarlası E1</em> — <strong>Hasat</strong> görevini tamamladı. <span class="mono" style="color:var(--text-muted)">09:15</span></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:var(--color-warning)"></div><div>Sistem: Sulama pompası bakımı yaklaşıyor. <span class="mono" style="color:var(--text-muted)">Dün 18:00</span></div></div>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-tasks">
+            <h1 class="panel-title">Görev listesi</h1>
+            <p class="panel-sub">Tüm tarla görevleri — öncelik ve durum</p>
+            <div class="toolbar">
+              <div class="filter-bar">
+                <input type="search" placeholder="Ara: görev, parsel, kişi..." />
+                <select><option>Tüm alanlar</option><option>Elma Bahçesi A3</option><option>Kiraz Tarlası B1</option><option>Armut Bahçesi C2</option><option>Şeftali Alanı D4</option><option>Kayısı Tarlası E1</option></select>
+                <select><option>Tüm durumlar</option><option>Açık</option><option>Devam</option><option>Tamam</option></select>
+              </div>
+              <button type="button" class="btn btn-primary"><i data-lucide="plus" class="lucide-icon" style="width:16px;height:16px"></i> Yeni görev</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Görev</th>
+                    <th>Parsel</th>
+                    <th>Atanan</th>
+                    <th>Öncelik</th>
+                    <th>Durum</th>
+                    <th class="mono">Bitiş</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Budama (kış)</td><td>Elma Bahçesi A3</td><td>Mehmet Yılmaz</td><td><span class="chip chip-med">Orta</span></td><td><span class="chip chip-todo">Açık</span></td><td class="mono">2026-12-20</td></tr>
+                  <tr><td>İlaçlama — fungal</td><td>Kiraz Tarlası B1</td><td>Ayşe Kaya</td><td><span class="chip chip-high">Yüksek</span></td><td><span class="chip chip-doing">Devam</span></td><td class="mono">2026-12-15</td></tr>
+                  <tr><td>Sulama programı</td><td>Armut Bahçesi C2</td><td>Hüseyin Demir</td><td><span class="chip chip-low">Düşük</span></td><td><span class="chip chip-done">Bitti</span></td><td class="mono">2026-12-10</td></tr>
+                  <tr><td>Gübreleme (N-P-K)</td><td>Şeftali Alanı D4</td><td>Fatma Çelik</td><td><span class="chip chip-med">Orta</span></td><td><span class="chip chip-doing">Devam</span></td><td class="mono">2026-12-18</td></tr>
+                  <tr><td>Hasat — erken dönem</td><td>Kayısı Tarlası E1</td><td>Ali Öztürk</td><td><span class="chip chip-high">Yüksek</span></td><td><span class="chip chip-done">Bitti</span></td><td class="mono">2026-12-08</td></tr>
+                  <tr><td>Ot biçme (çevre)</td><td>Elma Bahçesi A3</td><td>Mehmet Yılmaz</td><td><span class="chip chip-low">Düşük</span></td><td><span class="chip chip-todo">Açık</span></td><td class="mono">2026-12-22</td></tr>
+                  <tr><td>Soil test örnekleme</td><td>Armut Bahçesi C2</td><td>Ayşe Kaya</td><td><span class="chip chip-med">Orta</span></td><td><span class="chip chip-todo">Açık</span></td><td class="mono">2026-12-25</td></tr>
+                  <tr><td>Damla sulama denetimi</td><td>Şeftali Alanı D4</td><td>Hüseyin Demir</td><td><span class="chip chip-high">Yüksek</span></td><td><span class="chip chip-doing">Devam</span></td><td class="mono">2026-12-14</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-fields">
+            <h1 class="panel-title">Tarla ve parseller</h1>
+            <p class="panel-sub">Harita ve ürün bilgisi</p>
+            <div class="card-grid">
+              <div class="field-card">
+                <div class="map-ph"></div>
+                <div class="field-body">
+                  <h3>Elma Bahçesi A3</h3>
+                  <p class="field-meta">Ürün: Elma (Golden) · <span class="mono">12,4 ha</span></p>
+                </div>
+              </div>
+              <div class="field-card">
+                <div class="map-ph"></div>
+                <div class="field-body">
+                  <h3>Kiraz Tarlası B1</h3>
+                  <p class="field-meta">Ürün: Kiraz (Napolyon) · <span class="mono">8,2 ha</span></p>
+                </div>
+              </div>
+              <div class="field-card">
+                <div class="map-ph"></div>
+                <div class="field-body">
+                  <h3>Armut Bahçesi C2</h3>
+                  <p class="field-meta">Ürün: Armut (Deveci) · <span class="mono">6,0 ha</span></p>
+                </div>
+              </div>
+              <div class="field-card">
+                <div class="map-ph"></div>
+                <div class="field-body">
+                  <h3>Şeftali Alanı D4</h3>
+                  <p class="field-meta">Ürün: Şeftali (early) · <span class="mono">4,5 ha</span></p>
+                </div>
+              </div>
+              <div class="field-card">
+                <div class="map-ph"></div>
+                <div class="field-body">
+                  <h3>Kayısı Tarlası E1</h3>
+                  <p class="field-meta">Ürün: Kayısı (Hasanbey) · <span class="mono">9,1 ha</span></p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-issues">
+            <h1 class="panel-title">Sorun ve uyarılar</h1>
+            <p class="panel-sub">Önem sırası — açık kayıtlar</p>
+            <div class="issue-card critical">
+              <p class="sev" style="color:#FCA5A5"><span class="sev-dot err"></span> Kritik</p>
+              <h3 style="margin:8px 0 4px">Kiraz Tarlası B1 — Ilık kök çürüklüğü belirtisi</h3>
+              <p style="color:var(--text-secondary);font-size:0.85rem">Son ilaçlama: 2 hafta önce. Saha incelemesi öneriliyor.</p>
+            </div>
+            <div class="issue-card warn">
+              <p class="sev" style="color:#FCD34D"><span class="sev-dot wrn"></span> Uyarı</p>
+              <h3 style="margin:8px 0 4px">Sulama pompası — filtre tıkanıklığı</h3>
+              <p style="color:var(--text-secondary);font-size:0.85rem">Ekipman: Sulama pompası. Bakım penceresi: bu hafta.</p>
+            </div>
+            <div class="issue-card">
+              <p class="sev" style="color:var(--color-secondary)"><span class="sev-dot ok"></span> Bilgi</p>
+              <h3 style="margin:8px 0 4px">Elma Bahçesi A3 — randevu hatırlatma</h3>
+              <p style="color:var(--text-secondary);font-size:0.85rem">Budama ekibi 20 Aralık için planlandı.</p>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-team">
+            <h1 class="panel-title">Ekip</h1>
+            <p class="panel-sub">Çevrimiçi durum</p>
+            <div class="team-grid">
+              <div class="person online"><div class="avatar">MY</div><strong>Mehmet Yılmaz</strong><p class="role">Saha şefi</p></div>
+              <div class="person online"><div class="avatar">AK</div><strong>Ayşe Kaya</strong><p class="role">Bitki koruma</p></div>
+              <div class="person online"><div class="avatar">HD</div><strong>Hüseyin Demir</strong><p class="role">Sulama</p></div>
+              <div class="person online"><div class="avatar">FÇ</div><strong>Fatma Çelik</strong><p class="role">Gübre &amp; toprak</p></div>
+              <div class="person online"><div class="avatar">AÖ</div><strong>Ali Öztürk</strong><p class="role">Hasat koordinatörü</p></div>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-equipment">
+            <h1 class="panel-title">Ekipman</h1>
+            <p class="panel-sub">Kategorilere göre</p>
+            <div class="eq-section">
+              <h3>Çekici ve arazi</h3>
+              <div class="eq-card"><strong>Traktör (John Deere)</strong> — 6120M, son servis: 15 gün önce, durum: hazır</div>
+            </div>
+            <div class="eq-section">
+              <h3>Bitki koruma &amp; uygulama</h3>
+              <div class="eq-card"><strong>İlaçlama makinesi</strong> — 800 L, kalibrasyon: OK</div>
+            </div>
+            <div class="eq-section">
+              <h3>Sulama</h3>
+              <div class="eq-card"><strong>Sulama pompası</strong> — basınç: normal, filtre: kontrol gerekli</div>
+            </div>
+            <div class="eq-section">
+              <h3>Hasat &amp; lojistik</h3>
+              <div class="eq-card"><strong>Hasat kasası</strong> — 2 adet, depoda</div>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-settings">
+            <h1 class="panel-title">Ayarlar</h1>
+            <p class="panel-sub">Hesap ve arazi tercihleri</p>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Çiftlik adı</label>
+                <input type="text" value="Yıldız Tarım A.Ş. — Dark Canopy Demo" />
+              </div>
+              <div class="form-group">
+                <label>Varsayılan dil</label>
+                <select><option>Türkçe</option><option>English</option></select>
+              </div>
+              <div class="form-group">
+                <label>Varsayılan birim (alan)</label>
+                <select><option>Hektar (ha)</option><option>Dönüm</option></select>
+              </div>
+              <div class="toggle-row"><span>Push bildirimleri</span><div class="switch on" role="switch" aria-checked="true" tabindex="0" id="sw1"></div></div>
+              <div class="toggle-row"><span>SMS kritik alarmlar</span><div class="switch" role="switch" aria-checked="false" tabindex="0" id="sw2"></div></div>
+              <div class="form-group">
+                <label>Not</label>
+                <textarea rows="3" placeholder="Saha notları...">Kış budaması bütçesi onaylandı.</textarea>
+              </div>
+              <button type="button" class="btn btn-primary" style="align-self:flex-start">Kaydet</button>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div class="view-mobile">
+      <div class="mobile-wrap">
+        <div class="phone-frame" id="phone">
+          <div class="notch"><div class="notch-bar"></div></div>
+          <div class="m-header" id="m-header-title">Görevler</div>
+          <div class="m-content" id="m-content">
+            <div class="m-screen is-visible" id="m-tasks" data-m-header="Görevler">
+              <div class="m-card" data-detail="d1" style="cursor:pointer;border-color:rgba(34,197,94,0.3);box-shadow:0 0 12px rgba(34,197,94,0.12)">
+                <h4>Kiraz Tarlası B1</h4>
+                <p><strong>İlaçlama</strong> · Yüksek öncelik</p>
+                <p style="margin-top:6px"><span class="chip chip-doing" style="font-size:0.65rem">Devam</span> · Ayşe Kaya</p>
+              </div>
+              <div class="m-card" data-detail="d2" style="cursor:pointer">
+                <h4>Elma Bahçesi A3</h4>
+                <p><strong>Budama</strong> · Bugün</p>
+                <p style="margin-top:6px"><span class="chip chip-todo" style="font-size:0.65rem">Açık</span> · Mehmet Yılmaz</p>
+              </div>
+              <div class="m-card" data-detail="d3" style="cursor:pointer">
+                <h4>Armut Bahçesi C2</h4>
+                <p><strong>Sulama</strong></p>
+                <p style="margin-top:6px"><span class="chip chip-doing" style="font-size:0.65rem">Devam</span> · Hüseyin Demir</p>
+              </div>
+              <div class="m-card" data-detail="d4" style="cursor:pointer">
+                <h4>Şeftali Alanı D4</h4>
+                <p><strong>Gübreleme</strong> · N-P-K uygulaması</p>
+                <p style="margin-top:6px"><span class="chip chip-doing" style="font-size:0.65rem">Devam</span> · Fatma Çelik</p>
+              </div>
+            </div>
+
+            <div class="m-screen" id="m-detail" data-m-header="Görev detayı">
+              <button type="button" class="m-back" id="m-back"><i data-lucide="chevron-left" style="width:16px;height:16px"></i> Geri</button>
+              <h2 class="panel-title" style="font-size:1.2rem" id="detail-title">Kiraz Tarlası B1</h2>
+              <p class="m-detail-meta" id="detail-meta">Aktivite: <strong>İlaçlama</strong> · Atanan: Ayşe Kaya</p>
+              <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px" id="detail-desc">Fungal uygulama, ikinci tur. Tüm sıra kapsanacak; rüzgar &lt; 15 km/s beklentisi.</p>
+              <button type="button" class="m-pill m-pill-primary" id="btn-start">Başlat</button>
+              <button type="button" class="m-pill m-pill-ghost" id="btn-complete">Tamamla</button>
+            </div>
+
+            <div class="m-screen" id="m-history" data-m-header="Geçmiş">
+              <div class="m-card"><h4>Kayısı Tarlası E1 — Hasat</h4><p>Tamamlandı · Ali Öztürk · dün 17:20</p></div>
+              <div class="m-card"><h4>Elma Bahçesi A3 — Ot biçme</h4><p>Tamamlandı · Mehmet Yılmaz · 2 gün önce</p></div>
+              <div class="m-card"><h4>Şeftali Alanı D4 — Gübreleme</h4><p>Tamamlandı · Fatma Çelik · 3 gün önce</p></div>
+            </div>
+
+            <div class="m-screen" id="m-issue" data-m-header="Sorun bildir">
+              <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:12px">Kategori seçin:</p>
+              <button type="button" class="cat-btn" data-icat="1">Ekipman arızası</button>
+              <button type="button" class="cat-btn" data-icat="2">Hava / sulama</button>
+              <button type="button" class="cat-btn" data-icat="3">Hastalık / zararlı</button>
+              <p id="icat-msg" style="font-size:0.8rem;color:var(--color-primary);margin-top:8px;min-height:1.2em"></p>
+            </div>
+
+            <div class="m-screen" id="m-profile" data-m-header="Profil">
+              <div class="m-card" style="text-align:center;border-color:rgba(34,197,94,0.25);box-shadow:var(--glow-soft)">
+                <div class="person online" style="margin:0 auto 8px" id="m-prof-av"><div class="avatar" style="width:72px;height:72px;font-size:1.4rem">MY</div></div>
+                <strong>Mehmet Yılmaz</strong>
+                <p style="color:var(--text-secondary)">Saha operatörü</p>
+                <p class="mono" style="color:var(--text-muted);font-size:0.75rem;margin-top:8px">ID: TR-AG-2026-1042</p>
+              </div>
+              <p style="font-size:0.8rem;color:var(--text-muted);">Bu oturum: demo · Dark Canopy</p>
+            </div>
+          </div>
+          <nav class="m-bottom" id="m-nav">
+            <button type="button" class="m-tab is-active" data-mtab="tasks"><i data-lucide="list-todo"></i> Görevler</button>
+            <button type="button" class="m-tab" data-mtab="history"><i data-lucide="history"></i> Geçmiş</button>
+            <button type="button" class="m-tab" data-mtab="issue" title="Sorun bildir"><i data-lucide="alert-circle"></i> Bildir</button>
+            <button type="button" class="m-tab" data-mtab="profile"><i data-lucide="user"></i> Profil</button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      if (window.lucide) lucide.createIcons();
+
+      var detailMap = {
+        d1: { title: "Kiraz Tarlası B1", act: "İlaçlama", who: "Ayşe Kaya", body: "Fungal uygulama, ikinci tur. Tüm sıra kapsanacak; rüzgar < 15 km/s beklentisi." },
+        d2: { title: "Elma Bahçesi A3", act: "Budama", who: "Mehmet Yılmaz", body: "Kış budaması — ana dallar, havalandırma odaklı. Güvenlik tırpan kontrol listesi." },
+        d3: { title: "Armut Bahçesi C2", act: "Sulama", who: "Hüseyin Demir", body: "Damla hatları denetimi; sızıntı noktaları ve basınç logu eklenecek." },
+        d4: { title: "Şeftali Alanı D4", act: "Gübreleme", who: "Fatma Çelik", body: "N-P-K uygulaması; önceki toprak analizine göre dozaj onaylandı. Kayıt fotosu zorunlu." }
+      };
+
+      function showDesktopPanel(id) {
+        var panels = document.querySelectorAll(".main .panel");
+        var items = document.querySelectorAll(".sidebar .nav-item");
+        panels.forEach(function (p) {
+          p.classList.toggle("is-visible", p.id === "panel-" + id);
+        });
+        items.forEach(function (n) {
+          n.classList.toggle("is-active", n.getAttribute("data-panel") === id);
+        });
+      }
+
+      document.querySelectorAll(".sidebar .nav-item").forEach(function (el) {
+        el.addEventListener("click", function () {
+          showDesktopPanel(el.getAttribute("data-panel"));
+          if (window.lucide) lucide.createIcons();
+        });
+      });
+
+      var btnD = document.getElementById("btn-desktop");
+      var btnM = document.getElementById("btn-mobile");
+      function setMode(mode) {
+        document.body.classList.toggle("mode-desktop", mode === "desktop");
+        document.body.classList.toggle("mode-mobile", mode === "mobile");
+        btnD.classList.toggle("is-active", mode === "desktop");
+        btnM.classList.toggle("is-active", mode === "mobile");
+        if (window.lucide) lucide.createIcons();
+      }
+      btnD.addEventListener("click", function () { setMode("desktop"); });
+      btnM.addEventListener("click", function () { setMode("mobile"); });
+
+      var mHeader = document.getElementById("m-header-title");
+      var mTasks = document.getElementById("m-tasks");
+      var mDetail = document.getElementById("m-detail");
+      var mHistory = document.getElementById("m-history");
+      var mIssue = document.getElementById("m-issue");
+      var mProfile = document.getElementById("m-profile");
+      var bottomNav = document.getElementById("m-nav");
+
+      function setMobileScreen(showId) {
+        [mTasks, mDetail, mHistory, mIssue, mProfile].forEach(function (s) {
+          if (!s) return;
+          s.classList.toggle("is-visible", s.id === showId);
+        });
+        document.querySelectorAll("#m-nav .m-tab").forEach(function (t) {
+          var m = t.getAttribute("data-mtab");
+          var active = (showId === "m-detail" && m === "tasks") || (m === "tasks" && showId === "m-tasks") || (m === "history" && showId === "m-history") || (m === "issue" && showId === "m-issue") || (m === "profile" && showId === "m-profile");
+          t.classList.toggle("is-active", active);
+        });
+        var vis = document.querySelector(".m-screen.is-visible");
+        if (vis && vis.dataset.mHeader) mHeader.textContent = vis.dataset.mHeader;
+        if (showId === "m-detail") mHeader.textContent = "Görev detayı";
+        if (window.lucide) lucide.createIcons();
+      }
+
+      bottomNav.querySelectorAll(".m-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          var m = tab.getAttribute("data-mtab");
+          if (m === "tasks") setMobileScreen("m-tasks");
+          else if (m === "history") setMobileScreen("m-history");
+          else if (m === "issue") setMobileScreen("m-issue");
+          else if (m === "profile") setMobileScreen("m-profile");
+        });
+      });
+
+      document.querySelectorAll("#m-tasks [data-detail]").forEach(function (c) {
+        c.addEventListener("click", function () {
+          var id = c.getAttribute("data-detail");
+          var d = detailMap[id];
+          if (d) {
+            document.getElementById("detail-title").textContent = d.title;
+            document.getElementById("detail-meta").innerHTML = "Aktivite: <strong>" + d.act + "</strong> · Atanan: " + d.who;
+            document.getElementById("detail-desc").textContent = d.body;
+          }
+          setMobileScreen("m-detail");
+        });
+      });
+
+      document.getElementById("m-back").addEventListener("click", function () {
+        setMobileScreen("m-tasks");
+      });
+
+      document.getElementById("btn-start").addEventListener("click", function () {
+        alert("Demo: Başlatıldı (green glow butonu)");
+      });
+      document.getElementById("btn-complete").addEventListener("click", function () {
+        alert("Demo: Tamamlandı olarak işaretlendi");
+      });
+
+      document.querySelectorAll("#m-issue .cat-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var names = { "1": "Ekipman arızası", "2": "Hava / sulama", "3": "Hastalık / zararlı" };
+          var k = b.getAttribute("data-icat");
+          document.getElementById("icat-msg").textContent = "Seçildi: " + (names[k] || "");
+        });
+      });
+
+      [document.getElementById("sw1"), document.getElementById("sw2")].forEach(function (sw) {
+        if (!sw) return;
+        sw.addEventListener("click", function () {
+          var on = !sw.classList.contains("on");
+          sw.classList.toggle("on", on);
+          sw.setAttribute("aria-checked", on ? "true" : "false");
+        });
+        sw.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            sw.click();
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

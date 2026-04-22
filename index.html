@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agrova — Design Explorations</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0A0F0D;
+    --surface: #141B18;
+    --surface-1: #1B2420;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.18);
+    --text: #F0F3F0;
+    --text-2: #A8B5AD;
+    --text-3: #6B7A72;
+    --green: #3F8B4E;
+    --green-light: #5FB871;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 80px 24px 48px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .hero .logo .dot {
+    width: 14px;
+    height: 14px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(63, 139, 78, 0.5);
+  }
+
+  .hero .logo span {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: var(--text-2);
+  }
+
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--green-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text-2);
+    max-width: 560px;
+    margin: 0 auto 12px;
+  }
+
+  .hero .subtitle {
+    font-size: 14px;
+    color: var(--text-3);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-preview {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-preview iframe {
+    width: 1440px;
+    height: 900px;
+    border: none;
+    transform: scale(0.236);
+    transform-origin: top left;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .card-body {
+    padding: 20px 24px 24px;
+  }
+
+  .card-number {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green-light);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-2);
+    margin-bottom: 16px;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    color: var(--text-3);
+    background: var(--surface-1);
+  }
+
+  .card-swatch {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+
+  .footer {
+    text-align: center;
+    padding: 40px 24px 60px;
+    color: var(--text-3);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 720px) {
+    .hero h1 { font-size: 32px; }
+    .hero { padding: 48px 20px 32px; }
+    .grid { grid-template-columns: 1fr; padding: 0 16px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="logo">
+    <div class="dot"></div>
+    <span>agrova</span>
+  </div>
+  <h1>Design Explorations</h1>
+  <p>10 different design directions for the Agrova farm operations app. Each concept includes full desktop owner dashboard and mobile worker PWA screens with Turkish mock data.</p>
+  <p class="subtitle">Click any card to open the interactive prototype in a new tab.</p>
+</div>
+
+<div class="grid">
+
+  <a class="card" href="design-01-earth-harvest.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-01-earth-harvest.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 01</div>
+      <div class="card-title">Earth & Harvest</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#8B4513"></div>
+        <div class="swatch" style="background:#D2691E"></div>
+        <div class="swatch" style="background:#DAA520"></div>
+        <div class="swatch" style="background:#FFF8F0"></div>
+        <div class="swatch" style="background:#4A7C59"></div>
+      </div>
+      <div class="card-desc">Warm earthy tones with terracotta, clay, and rich soil colors. Tuscan countryside meets modern SaaS. Handcrafted, organic feel.</div>
+      <div class="card-tags">
+        <span class="tag">Warm</span>
+        <span class="tag">Earthy</span>
+        <span class="tag">Terracotta</span>
+        <span class="tag">Organic</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-02-nordic-frost.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-02-nordic-frost.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 02</div>
+      <div class="card-title">Nordic Frost</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#2563EB"></div>
+        <div class="swatch" style="background:#60A5FA"></div>
+        <div class="swatch" style="background:#06B6D4"></div>
+        <div class="swatch" style="background:#F8FAFC"></div>
+        <div class="swatch" style="background:#0F172A"></div>
+      </div>
+      <div class="card-desc">Clean Scandinavian minimalism with cool blue-gray tones and ice-blue accents. Frosted glass sidebar, maximum breathing room.</div>
+      <div class="card-tags">
+        <span class="tag">Cool</span>
+        <span class="tag">Minimal</span>
+        <span class="tag">Scandinavian</span>
+        <span class="tag">Glass</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-03-dark-canopy.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-03-dark-canopy.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 03</div>
+      <div class="card-title">Dark Canopy</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#22C55E"></div>
+        <div class="swatch" style="background:#4ADE80"></div>
+        <div class="swatch" style="background:#A3E635"></div>
+        <div class="swatch" style="background:#0A0F0D"></div>
+        <div class="swatch" style="background:#141B18"></div>
+      </div>
+      <div class="card-desc">Dark mode first, inspired by the shade under a dense tree canopy. Deep greens and charcoals with vivid neon-green glow accents.</div>
+      <div class="card-tags">
+        <span class="tag">Dark</span>
+        <span class="tag">Neon</span>
+        <span class="tag">Glow</span>
+        <span class="tag">Forest</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-04-sunrise-fields.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-04-sunrise-fields.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 04</div>
+      <div class="card-title">Sunrise Fields</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#EA580C"></div>
+        <div class="swatch" style="background:#F59E0B"></div>
+        <div class="swatch" style="background:#84CC16"></div>
+        <div class="swatch" style="background:#FFFBEB"></div>
+        <div class="swatch" style="background:#431407"></div>
+      </div>
+      <div class="card-desc">Warm, optimistic design inspired by golden hour over farmland. Rich gradients from deep orange to golden yellow. Mediterranean morning energy.</div>
+      <div class="card-tags">
+        <span class="tag">Gradient</span>
+        <span class="tag">Warm</span>
+        <span class="tag">Sunrise</span>
+        <span class="tag">Optimistic</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-05-clean-slate.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-05-clean-slate.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 05</div>
+      <div class="card-title">Clean Slate</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#18181B"></div>
+        <div class="swatch" style="background:#22C55E"></div>
+        <div class="swatch" style="background:#FFFFFF; border-color:rgba(0,0,0,0.15)"></div>
+        <div class="swatch" style="background:#FAFAFA; border-color:rgba(0,0,0,0.15)"></div>
+        <div class="swatch" style="background:#E4E4E7; border-color:rgba(0,0,0,0.15)"></div>
+      </div>
+      <div class="card-desc">Ultra-minimal, almost monochrome with a single green accent. Maximum whitespace, typography-driven. Inspired by Vercel and Apple.</div>
+      <div class="card-tags">
+        <span class="tag">Minimal</span>
+        <span class="tag">Monochrome</span>
+        <span class="tag">Typography</span>
+        <span class="tag">Clean</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-06-olive-grove.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-06-olive-grove.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 06</div>
+      <div class="card-title">Olive Grove</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#6B7F3B"></div>
+        <div class="swatch" style="background:#8FA65D"></div>
+        <div class="swatch" style="background:#C7A951"></div>
+        <div class="swatch" style="background:#F7F5F0"></div>
+        <div class="swatch" style="background:#2D2B26"></div>
+      </div>
+      <div class="card-desc">Mediterranean elegance with sage greens, olive tones, and warm stone. Serif typography for headings gives a premium, editorial feel.</div>
+      <div class="card-tags">
+        <span class="tag">Mediterranean</span>
+        <span class="tag">Serif</span>
+        <span class="tag">Elegant</span>
+        <span class="tag">Premium</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-07-blueprint.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-07-blueprint.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 07</div>
+      <div class="card-title">Blueprint</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#1E40AF"></div>
+        <div class="swatch" style="background:#3B82F6"></div>
+        <div class="swatch" style="background:#F97316"></div>
+        <div class="swatch" style="background:#F0F4F8"></div>
+        <div class="swatch" style="background:#111827"></div>
+      </div>
+      <div class="card-desc">Technical, engineering-inspired with grid patterns and precise lines. Monospace numbers, blueprint grid background. Precision and structure.</div>
+      <div class="card-tags">
+        <span class="tag">Technical</span>
+        <span class="tag">Grid</span>
+        <span class="tag">Monospace</span>
+        <span class="tag">Precise</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-08-lavender-dusk.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-08-lavender-dusk.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 08</div>
+      <div class="card-title">Lavender Dusk</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#7C3AED"></div>
+        <div class="swatch" style="background:#A78BFA"></div>
+        <div class="swatch" style="background:#EC4899"></div>
+        <div class="swatch" style="background:#FAF5FF"></div>
+        <div class="swatch" style="background:#1E1B4B"></div>
+      </div>
+      <div class="card-desc">Soft, calming twilight design with purple and violet tones and warm pink accents. Approachable and modern, like Arc browser meets Notion.</div>
+      <div class="card-tags">
+        <span class="tag">Purple</span>
+        <span class="tag">Soft</span>
+        <span class="tag">Calming</span>
+        <span class="tag">Modern</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-09-anadolu.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-09-anadolu.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 09</div>
+      <div class="card-title">Anadolu</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#B91C1C"></div>
+        <div class="swatch" style="background:#0891B2"></div>
+        <div class="swatch" style="background:#D97706"></div>
+        <div class="swatch" style="background:#FEF7ED"></div>
+        <div class="swatch" style="background:#1C1917"></div>
+      </div>
+      <div class="card-desc">Turkish-inspired celebrating Anatolian heritage. Deep red, Iznik turquoise, golden amber with subtle geometric kilim border patterns.</div>
+      <div class="card-tags">
+        <span class="tag">Turkish</span>
+        <span class="tag">Cultural</span>
+        <span class="tag">Geometric</span>
+        <span class="tag">Bold</span>
+      </div>
+    </div>
+  </a>
+
+  <a class="card" href="design-10-glass-garden.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="design-10-glass-garden.html" loading="lazy" sandbox></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-number">Design 10</div>
+      <div class="card-title">Glass Garden</div>
+      <div class="card-swatch">
+        <div class="swatch" style="background:#059669"></div>
+        <div class="swatch" style="background:#10B981"></div>
+        <div class="swatch" style="background:#6366F1"></div>
+        <div class="swatch" style="background:#ECFDF5; border-color:rgba(0,0,0,0.1)"></div>
+        <div class="swatch" style="background:#064E3B"></div>
+      </div>
+      <div class="card-desc">Modern glassmorphism with layered translucent panels over a green gradient. Like looking through a greenhouse. Airy, layered, futuristic.</div>
+      <div class="card-tags">
+        <span class="tag">Glass</span>
+        <span class="tag">Translucent</span>
+        <span class="tag">Layered</span>
+        <span class="tag">Futuristic</span>
+      </div>
+    </div>
+  </a>
+
+</div>
+
+<div class="footer">
+  Agrova Design Explorations &mdash; Brainstorming Session &mdash; April 2026<br>
+  10 concepts &bull; Desktop + Mobile &bull; Turkish mock data &bull; Interactive prototypes
+</div>
+
+</body>
+</html>
