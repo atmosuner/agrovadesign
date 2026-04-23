@@ -82,7 +82,55 @@
       padding: 20px 0;
       display: flex;
       flex-direction: column;
+      min-height: 0;
+      align-self: stretch;
+      transition: width 0.25s ease;
+      overflow: hidden;
     }
+    .sidebar.is-collapsed { width: 64px; }
+    .sidebar.is-collapsed .nav-item {
+      font-size: 0;
+      gap: 0;
+      justify-content: center;
+      padding: 0.65rem;
+    }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg,
+    .sidebar.is-collapsed .nav-item [data-lucide] {
+      font-size: initial;
+      width: 18px;
+      height: 18px;
+    }
+    .sidebar.is-collapsed .brand span { display: none; }
+    .sidebar.is-collapsed .brand {
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem 0 1rem 0;
+      text-align: center;
+    }
+    .collapse-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(100% - 20px);
+      max-width: 100%;
+      margin-left: 10px;
+      margin-right: 10px;
+      padding: 0.5rem;
+      margin-top: auto;
+      background: transparent;
+      border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-muted, #666);
+      font-family: inherit;
+      font-size: 0.75rem;
+      transition: background 0.2s;
+      gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128, 128, 128, 0.1); }
+    .sidebar.is-collapsed .collapse-btn { width: calc(100% - 16px); margin-left: 8px; margin-right: 8px; }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
     .brand {
       padding: 0 20px 20px;
       font-weight: 800;
@@ -308,14 +356,14 @@
 <body>
   <div class="app-shell">
     <div class="view-toggle" role="toolbar" aria-label="Görünüm seç">
-      <button type="button" class="view-toggle__btn" id="btn-desktop" aria-pressed="true">Masaüstü / Sahip Görünümü</button>
-      <button type="button" class="view-toggle__btn" id="btn-mobile" aria-pressed="false">Mobil / İşçi Görünümü</button>
+      <button type="button" class="view-toggle__btn" id="btn-desktop" aria-pressed="false">Masaüstü / Sahip Görünümü</button>
+      <button type="button" class="view-toggle__btn" id="btn-mobile" aria-pressed="true">Mobil / İşçi Görünümü</button>
     </div>
 
-    <section id="view-desktop" class="view-section is-active" aria-label="Masaüstü görünümü">
+    <section id="view-desktop" class="view-section" aria-label="Masaüstü görünümü">
       <div class="desktop">
         <aside class="sidebar" role="navigation" aria-label="Ana menü">
-          <div class="brand">AGROVA</div>
+          <div class="brand"><span>AGROVA</span></div>
           <button type="button" class="nav-item" data-panel="bugun" aria-current="true">
             <i data-lucide="layout-dashboard" width="18" height="18"></i> Bugün (Özet)
           </button>
@@ -336,6 +384,10 @@
           </button>
           <button type="button" class="nav-item" data-panel="ayarlar">
             <i data-lucide="settings" width="18" height="18"></i> Ayarlar
+          </button>
+          <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+            <i data-lucide="panel-left-close" style="width: 18px; height: 18px"></i>
+            <span>Daralt</span>
           </button>
         </aside>
         <main class="main">
@@ -596,7 +648,7 @@
       </div>
     </section>
 
-    <section id="view-mobile" class="view-section" aria-label="Mobil görünüm" hidden>
+    <section id="view-mobile" class="view-section is-active" aria-label="Mobil görünüm">
       <div class="mobile-wrap">
         <div class="phone" aria-label="Telefon çerçevesi">
           <div class="phone__notch"><span></span></div>
@@ -798,7 +850,21 @@
         requestAnimationFrame(refreshIcons);
       };
 
-      setView(true);
+      setView(false);
+      var sidebar = document.querySelector(".sidebar");
+      var collapseBtn = document.querySelector("#sidebar-collapse");
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener("click", function () {
+          sidebar.classList.toggle("is-collapsed");
+          var ico = collapseBtn.querySelector("[data-lucide]");
+          if (sidebar.classList.contains("is-collapsed")) {
+            ico.setAttribute("data-lucide", "panel-right-close");
+          } else {
+            ico.setAttribute("data-lucide", "panel-left-close");
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
       applyTaskFilter();
       refreshIcons();
     })();

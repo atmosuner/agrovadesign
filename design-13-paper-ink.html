@@ -114,6 +114,67 @@
         background: var(--surface);
         border-right: 2px solid var(--ink);
         padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        align-self: stretch;
+        transition: width 0.25s ease;
+        overflow: hidden;
+      }
+      .sidebar.is-collapsed {
+        width: 64px;
+      }
+      .sidebar.is-collapsed .nav a {
+        font-size: 0;
+        gap: 0;
+        justify-content: center;
+        padding: 0.65rem;
+      }
+      .sidebar.is-collapsed .nav a i,
+      .sidebar.is-collapsed .nav a svg,
+      .sidebar.is-collapsed .nav a [data-lucide] {
+        font-size: initial;
+        width: 18px;
+        height: 18px;
+      }
+      .sidebar.is-collapsed .sidebar-brand span {
+        display: none;
+      }
+      .sidebar.is-collapsed .sidebar-brand .sub {
+        display: none;
+      }
+      .sidebar.is-collapsed .sidebar-brand {
+        justify-content: center;
+        padding: 0.5rem 0 1rem;
+        text-align: center;
+        font-size: 0;
+        line-height: 0;
+      }
+      .desk-layout:has(.sidebar.is-collapsed) .main {
+        max-width: calc(100vw - 64px);
+      }
+      .collapse-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0.5rem;
+        margin-top: auto;
+        background: transparent;
+        border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--muted, #666);
+        font-family: inherit;
+        font-size: 0.75rem;
+        transition: background 0.2s;
+        gap: 0.5rem;
+      }
+      .collapse-btn:hover {
+        background: rgba(128, 128, 128, 0.1);
+      }
+      .sidebar.is-collapsed .collapse-btn span {
+        display: none;
       }
       .sidebar-brand {
         padding: 20px 18px 16px;
@@ -451,13 +512,13 @@
   <body>
     <div class="toggle-bar" role="group" aria-label="Görünüm seçin">
       <span class="accent-dot" aria-hidden="true"></span>
-      <button type="button" id="btn-desk" aria-pressed="true">Masaüstü / Sahip Görünümü</button>
-      <button type="button" id="btn-mob" aria-pressed="false">Mobil / İşçi Görünümü</button>
+      <button type="button" id="btn-desk" aria-pressed="false">Masaüstü / Sahip Görünümü</button>
+      <button type="button" id="btn-mob" aria-pressed="true">Mobil / İşçi Görünümü</button>
     </div>
-    <div id="view-desk" class="view-wrap is-active" data-view="desk">
+    <div id="view-desk" class="view-wrap" data-view="desk" hidden>
       <div class="desk-layout">
         <aside class="sidebar" aria-label="Ana menü">
-          <div class="sidebar-brand">Agrova<div class="sub">Çiftlik Operasyonu</div></div>
+          <div class="sidebar-brand"><span>Agrova</span><div class="sub">Çiftlik Operasyonu</div></div>
           <ul class="nav" id="desk-nav">
             <li><a href="#bugun" data-panel="bugun" class="is-active"><i data-lucide="newspaper" class="ico"></i> Bugün (Özet)</a></li>
             <li><a href="#gorevler" data-panel="gorevler"><i data-lucide="clipboard-list" class="ico"></i> Görevler</a></li>
@@ -467,6 +528,10 @@
             <li><a href="#ekipman" data-panel="ekipman"><i data-lucide="tractor" class="ico"></i> Ekipman</a></li>
             <li><a href="#ayarlar" data-panel="ayarlar"><i data-lucide="settings" class="ico"></i> Ayarlar</a></li>
           </ul>
+          <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+            <i data-lucide="panel-left-close" style="width: 18px; height: 18px"></i>
+            <span>Daralt</span>
+          </button>
         </aside>
         <main class="main" id="desk-main">
           <div id="panel-bugun" class="panel is-active" data-panel="bugun" role="region" aria-label="Bugün">
@@ -621,7 +686,7 @@
         </main>
       </div>
     </div>
-    <div id="view-mob" class="view-wrap" data-view="mob" hidden>
+    <div id="view-mob" class="view-wrap is-active" data-view="mob">
       <div class="mobile-outer">
         <div class="phone" aria-label="Telefon 390 piksel">
           <div class="phone-top" aria-hidden="true"></div>
@@ -813,7 +878,21 @@
           if (!pill) return;
           pill.classList.toggle("is-on");
         });
-        setView("desk");
+        setView("mob");
+        var sidebar = document.querySelector("#view-desk .sidebar");
+        var collapseBtn = document.querySelector("#sidebar-collapse");
+        if (collapseBtn && sidebar) {
+          collapseBtn.addEventListener("click", function () {
+            sidebar.classList.toggle("is-collapsed");
+            var ico = collapseBtn.querySelector("[data-lucide]");
+            if (sidebar.classList.contains("is-collapsed")) {
+              ico.setAttribute("data-lucide", "panel-right-close");
+            } else {
+              ico.setAttribute("data-lucide", "panel-left-close");
+            }
+            if (window.lucide) lucide.createIcons();
+          });
+        }
         mountIcons();
       })();
     </script>

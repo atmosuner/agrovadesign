@@ -131,6 +131,8 @@
       flex-direction: column;
       gap: 8px;
       box-shadow: var(--shadow-green);
+      min-height: 0;
+      align-self: stretch;
     }
 
     .sidebar-label {
@@ -726,6 +728,24 @@
     }
 
     .hidden { display: none !important; }
+
+    .sidebar { transition: width 0.25s ease; overflow: hidden; }
+    .sidebar.is-collapsed { width: 64px; }
+    .sidebar.is-collapsed .sidebar-label { display: none; }
+    .sidebar.is-collapsed .nav-item { font-size: 0; gap: 0; justify-content: center; padding: 0.65rem; }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg,
+    .sidebar.is-collapsed .nav-item [data-lucide] { font-size: initial; width: 18px; height: 18px; }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--border, rgba(0,0,0,0.1));
+      border-radius: 8px; cursor: pointer;
+      color: var(--text-muted, #666); font-family: inherit; font-size: 0.75rem;
+      transition: background 0.2s; gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128,128,128,0.1); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
   </style>
 </head>
 <body>
@@ -736,13 +756,13 @@
         Agrova
       </div>
       <div class="toggle-group" role="tablist" aria-label="Görünüm">
-        <button type="button" class="toggle-btn active" id="btn-desktop" data-view="desktop">Masaüstü / Sahip</button>
-        <button type="button" class="toggle-btn" id="btn-mobile" data-view="mobile">Mobil / İşçi</button>
+        <button type="button" class="toggle-btn" id="btn-desktop" data-view="desktop" aria-pressed="false">Masaüstü / Sahip</button>
+        <button type="button" class="toggle-btn active" id="btn-mobile" data-view="mobile" aria-pressed="true">Mobil / İşçi</button>
       </div>
     </header>
 
     <!-- DESKTOP -->
-    <section id="view-desktop" class="view-section active">
+    <section id="view-desktop" class="view-section">
       <div class="desktop-layout">
         <aside class="sidebar" aria-label="Ana menü">
           <span class="sidebar-label">Ekranlar</span>
@@ -773,6 +793,10 @@
           <button type="button" class="nav-item" data-tab="settings">
             <i data-lucide="settings"></i>
             Ayarlar
+          </button>
+          <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+            <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+            <span>Daralt</span>
           </button>
         </aside>
 
@@ -960,7 +984,7 @@
     </section>
 
     <!-- MOBILE -->
-    <section id="view-mobile" class="view-section">
+    <section id="view-mobile" class="view-section active">
       <div class="mobile-view">
         <div class="phone-frame" id="phone-frame">
           <div class="phone-notch"><span></span></div>
@@ -1201,6 +1225,9 @@
         document.getElementById('view-mobile').classList.remove('active');
         document.getElementById('btn-desktop').classList.add('active');
         document.getElementById('btn-mobile').classList.remove('active');
+        document.getElementById('btn-desktop').setAttribute('aria-pressed', 'true');
+        document.getElementById('btn-mobile').setAttribute('aria-pressed', 'false');
+        if (window.lucide) lucide.createIcons();
       });
 
       document.getElementById('btn-mobile').addEventListener('click', function () {
@@ -1208,8 +1235,25 @@
         document.getElementById('view-desktop').classList.remove('active');
         document.getElementById('btn-mobile').classList.add('active');
         document.getElementById('btn-desktop').classList.remove('active');
+        document.getElementById('btn-mobile').setAttribute('aria-pressed', 'true');
+        document.getElementById('btn-desktop').setAttribute('aria-pressed', 'false');
         if (window.lucide) lucide.createIcons();
       });
+
+      var sidebar = document.querySelector('.sidebar');
+      var collapseBtn = document.querySelector('#sidebar-collapse');
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener('click', function() {
+          sidebar.classList.toggle('is-collapsed');
+          var ico = collapseBtn.querySelector('[data-lucide]');
+          if (sidebar.classList.contains('is-collapsed')) {
+            ico.setAttribute('data-lucide', 'panel-right-close');
+          } else {
+            ico.setAttribute('data-lucide', 'panel-left-close');
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
 
       document.querySelectorAll('.nav-item').forEach(function (btn) {
         btn.addEventListener('click', function () {

@@ -83,7 +83,54 @@
       display: flex;
       flex-direction: column;
       padding: 1rem 0 1.5rem;
+      min-height: 0;
+      align-self: stretch;
+      transition: width 0.25s ease;
+      overflow: hidden;
     }
+    .sidebar.is-collapsed { width: 64px; }
+    .sidebar.is-collapsed .nav-item {
+      font-size: 0;
+      gap: 0;
+      justify-content: center;
+      padding: 0.65rem;
+    }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg,
+    .sidebar.is-collapsed .nav-item [data-lucide] {
+      font-size: initial;
+      width: 18px;
+      height: 18px;
+    }
+    .sidebar.is-collapsed .sidebar-brand span { display: none; }
+    .sidebar.is-collapsed .sidebar-brand {
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem 0 1rem 0;
+    }
+    .collapse-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(100% - 1.3rem);
+      padding: 0.5rem;
+      margin-left: 0.65rem;
+      margin-right: 0.65rem;
+      margin-top: auto;
+      margin-bottom: 0;
+      background: transparent;
+      border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--color-text-muted, #666);
+      font-family: inherit;
+      font-size: 0.75rem;
+      transition: background 0.2s;
+      gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(183, 65, 14, 0.08); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
+    .sidebar.is-collapsed .collapse-btn { width: calc(100% - 0.8rem); margin-left: 0.4rem; margin-right: 0.4rem; }
     .sidebar-brand {
       padding: 0.25rem 1rem 1rem;
       font-size: 1.125rem;
@@ -397,16 +444,16 @@
     .cat-tabs button.is-active { background: rgba(183, 65, 14, 0.15); color: var(--color-primary); border-color: var(--color-primary); }
   </style>
 </head>
-<body class="mode-desktop">
+<body class="mode-mobile">
   <div class="view-toggle-bar" role="tablist" aria-label="Görünüm">
-    <button type="button" id="btnDesktop" class="is-active" data-mode="desktop">Masaüstü / Sahip Görünümü</button>
-    <button type="button" id="btnMobile" data-mode="mobile">Mobil / İşçi Görünümü</button>
+    <button type="button" id="btnDesktop" data-mode="desktop" aria-pressed="false">Masaüstü / Sahip Görünümü</button>
+    <button type="button" id="btnMobile" class="is-active" data-mode="mobile" aria-pressed="true">Mobil / İşçi Görünümü</button>
   </div>
 
   <div class="shell">
     <div class="desktop-shell" id="desktopShell">
       <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">AGROVA</div>
+        <div class="sidebar-brand"><span>AGROVA</span></div>
         <div class="nav-item is-active" data-panel="p-dashboard"><i data-lucide="layout-dashboard"></i> Bugün (Özet)</div>
         <div class="nav-item" data-panel="p-gorevler"><i data-lucide="list-checks"></i> Görevler</div>
         <div class="nav-item" data-panel="p-tarla"><i data-lucide="map-pinned"></i> Tarlalar</div>
@@ -414,6 +461,10 @@
         <div class="nav-item" data-panel="p-ekip"><i data-lucide="users"></i> Ekip</div>
         <div class="nav-item" data-panel="p-ekipman"><i data-lucide="tractor"></i> Ekipman</div>
         <div class="nav-item" data-panel="p-ayar"><i data-lucide="settings"></i> Ayarlar</div>
+        <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+          <i data-lucide="panel-left-close" style="width: 18px; height: 18px"></i>
+          <span>Daralt</span>
+        </button>
       </aside>
 
       <main class="main" id="main">
@@ -741,6 +792,8 @@
         document.body.classList.add("mode-desktop");
         document.getElementById("btnDesktop").classList.add("is-active");
         document.getElementById("btnMobile").classList.remove("is-active");
+        document.getElementById("btnDesktop").setAttribute("aria-pressed", "true");
+        document.getElementById("btnMobile").setAttribute("aria-pressed", "false");
         refreshIcons();
       });
       document.getElementById("btnMobile").addEventListener("click", function () {
@@ -748,8 +801,25 @@
         document.body.classList.add("mode-mobile");
         document.getElementById("btnMobile").classList.add("is-active");
         document.getElementById("btnDesktop").classList.remove("is-active");
+        document.getElementById("btnMobile").setAttribute("aria-pressed", "true");
+        document.getElementById("btnDesktop").setAttribute("aria-pressed", "false");
         refreshIcons();
       });
+
+      var sidebarEl = document.getElementById("sidebar");
+      var collapseBtn = document.getElementById("sidebar-collapse");
+      if (collapseBtn && sidebarEl) {
+        collapseBtn.addEventListener("click", function () {
+          sidebarEl.classList.toggle("is-collapsed");
+          var ico = collapseBtn.querySelector("[data-lucide]");
+          if (sidebarEl.classList.contains("is-collapsed")) {
+            ico.setAttribute("data-lucide", "panel-right-close");
+          } else {
+            ico.setAttribute("data-lucide", "panel-left-close");
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
 
       const navItems = document.querySelectorAll(".nav-item");
       const panels = document.querySelectorAll(".main .panel");

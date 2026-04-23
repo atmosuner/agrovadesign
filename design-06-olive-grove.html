@@ -90,12 +90,32 @@
 
     /* ——— Desktop sidebar ——— */
     .sidebar {
-      width: 240px; flex-shrink: 0;
+      width: 240px; min-width: 240px; flex-shrink: 0;
       background: var(--surface);
       border-right: 1px solid var(--border);
       padding: 1rem 0.75rem;
       display: flex; flex-direction: column; gap: 0.25rem;
+      transition: width 0.25s ease, min-width 0.25s ease;
+      overflow: hidden;
+      min-height: 0;
     }
+    .sidebar-nav { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0.25rem; overflow-y: auto; }
+    .sidebar.is-collapsed { width: 64px; min-width: 64px; }
+    .sidebar.is-collapsed .nav-item { font-size: 0; gap: 0; justify-content: center; padding: 0.65rem; }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg,
+    .sidebar.is-collapsed .nav-item [data-lucide] { font-size: initial; width: 18px; height: 18px; }
+    .sidebar.is-collapsed .sidebar-footer { display: none; }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--border, rgba(0,0,0,0.1));
+      border-radius: 8px; cursor: pointer;
+      color: var(--text-secondary, #666); font-family: inherit; font-size: 0.75rem;
+      transition: background 0.2s; gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128,128,128,0.1); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
     .sidebar .nav-item {
       display: flex; align-items: center; gap: 0.6rem;
       padding: 0.65rem 0.75rem; border-radius: 10px;
@@ -374,7 +394,7 @@
     [data-mode="desktop"] .mobile-view { display: none !important; }
   </style>
 </head>
-<body class="bg-texture" data-mode="desktop">
+<body class="bg-texture" data-mode="mobile">
   <header class="app-header">
     <div class="brand">
       <div class="brand-mark" aria-hidden="true"><i data-lucide="leaf" class="lucide-icon" style="width:20px;height:20px"></i></div>
@@ -384,21 +404,27 @@
       </div>
     </div>
     <div class="view-toggle" role="group" aria-label="Görünüm modu">
-      <button type="button" id="btnDesktop" aria-pressed="true">Masaüstü / İşveren</button>
-      <button type="button" id="btnMobile" aria-pressed="false">Mobil / İşçi</button>
+      <button type="button" id="btnDesktop" aria-pressed="false">Masaüstü / İşveren</button>
+      <button type="button" id="btnMobile" aria-pressed="true">Mobil / İşçi</button>
     </div>
   </header>
 
   <!-- ——— Desktop ——— -->
-  <div class="shell shell-desktop">
+  <div class="shell shell-desktop" id="shell-desktop" hidden>
     <nav class="sidebar" aria-label="Ana menü">
-      <button class="nav-item" type="button" data-panel="d-dash" data-active="true"><i data-lucide="layout-dashboard"></i> Bugün</button>
-      <button class="nav-item" type="button" data-panel="d-tasks"><i data-lucide="list-todo"></i> Görevler</button>
-      <button class="nav-item" type="button" data-panel="d-fields"><i data-lucide="map"></i> Tarlalar</button>
-      <button class="nav-item" type="button" data-panel="d-issues"><i data-lucide="alert-triangle"></i> Sorunlar</button>
-      <button class="nav-item" type="button" data-panel="d-team"><i data-lucide="users"></i> Ekip</button>
-      <button class="nav-item" type="button" data-panel="d-equip"><i data-lucide="tractor"></i> Ekipman</button>
-      <button class="nav-item" type="button" data-panel="d-settings"><i data-lucide="settings"></i> Ayarlar</button>
+      <div class="sidebar-nav">
+        <button class="nav-item" type="button" data-panel="d-dash" data-active="true"><i data-lucide="layout-dashboard"></i> Bugün</button>
+        <button class="nav-item" type="button" data-panel="d-tasks"><i data-lucide="list-todo"></i> Görevler</button>
+        <button class="nav-item" type="button" data-panel="d-fields"><i data-lucide="map"></i> Tarlalar</button>
+        <button class="nav-item" type="button" data-panel="d-issues"><i data-lucide="alert-triangle"></i> Sorunlar</button>
+        <button class="nav-item" type="button" data-panel="d-team"><i data-lucide="users"></i> Ekip</button>
+        <button class="nav-item" type="button" data-panel="d-equip"><i data-lucide="tractor"></i> Ekipman</button>
+        <button class="nav-item" type="button" data-panel="d-settings"><i data-lucide="settings"></i> Ayarlar</button>
+      </div>
+      <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+        <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+        <span>Daralt</span>
+      </button>
       <div class="sidebar-footer">Olive Grove · v0.1 prototip</div>
     </nav>
 
@@ -696,7 +722,7 @@
   </div>
 
   <!-- ——— Mobile / Worker ——— -->
-  <div class="mobile-view" data-active="false" id="mobileView">
+  <div class="mobile-view" data-active="true" id="mobileView">
     <div class="phone-frame" id="phoneFrame">
       <div class="phone-notch">Agrova · İşçi</div>
       <div class="phone-body" id="phoneBody">
@@ -803,15 +829,24 @@
       var mobileView = document.getElementById("mobileView");
       var screens = { "0": "m1", "1": "m2", "2": "m3", "3": "m4", "4": "m5" };
 
+      var shellD = document.getElementById("shell-desktop");
+
       function setMode(m) {
         body.setAttribute("data-mode", m);
         var isD = m === "desktop";
         btnD.setAttribute("aria-pressed", isD);
         btnM.setAttribute("aria-pressed", !isD);
         mobileView.setAttribute("data-active", !isD);
+        if (shellD) {
+          if (isD) shellD.removeAttribute("hidden");
+          else shellD.setAttribute("hidden", "");
+        }
+        if (isD) mobileView.setAttribute("hidden", "");
+        else mobileView.removeAttribute("hidden");
+        if (window.lucide) lucide.createIcons();
       }
       btnD.addEventListener("click", function () { setMode("desktop"); });
-      btnM.addEventListener("click", function () { setMode("mobile"); if (window.lucide) lucide.createIcons(); });
+      btnM.addEventListener("click", function () { setMode("mobile"); });
 
       /* Desktop sidebar */
       var navBtns = document.querySelectorAll(".sidebar .nav-item");
@@ -850,6 +885,21 @@
             b.setAttribute("aria-pressed", "true");
             catPick.textContent = b.textContent.trim();
           });
+        });
+      }
+
+      var sidebar = document.querySelector(".sidebar");
+      var collapseBtn = document.querySelector("#sidebar-collapse");
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener("click", function() {
+          sidebar.classList.toggle("is-collapsed");
+          var ico = collapseBtn.querySelector("[data-lucide]");
+          if (sidebar.classList.contains("is-collapsed")) {
+            ico.setAttribute("data-lucide", "panel-right-close");
+          } else {
+            ico.setAttribute("data-lucide", "panel-left-close");
+          }
+          if (window.lucide) lucide.createIcons();
         });
       }
     })();

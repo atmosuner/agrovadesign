@@ -136,7 +136,41 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      align-self: stretch;
+      min-height: 0;
+      transition: width 0.25s ease;
+      overflow: hidden;
     }
+    .sidebar.is-collapsed { width: 64px; }
+    .sidebar.is-collapsed .sidebar-label { display: none; }
+    .sidebar.is-collapsed .nav-item span,
+    .sidebar.is-collapsed .sidebar-brand span,
+    .sidebar.is-collapsed .nav-item-text { display: none; }
+    .sidebar.is-collapsed .nav-item {
+      justify-content: center;
+      padding: 10px 12px;
+      font-size: 0;
+      line-height: 0;
+      gap: 0;
+    }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg {
+      width: 18px;
+      height: 18px;
+    }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--color-border);
+      border-radius: 8px; cursor: pointer;
+      color: var(--text-secondary);
+      font-family: inherit; font-size: 0.75rem;
+      font-weight: 500;
+      transition: background 0.2s, border-color 0.2s;
+      gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(255, 255, 255, 0.06); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
 
     .sidebar-label {
       font-size: 0.65rem;
@@ -848,7 +882,7 @@
     .hidden { display: none !important; }
   </style>
 </head>
-<body class="mode-desktop">
+<body class="mode-mobile">
   <div class="app">
     <header class="top-bar">
       <div class="logo">
@@ -856,8 +890,8 @@
         <span>Agrova</span>
       </div>
       <div class="mode-toggle" role="group" aria-label="Görünüm">
-        <button type="button" id="btn-desktop" class="is-active" data-mode="desktop">Masaüstü / İşveren</button>
-        <button type="button" id="btn-mobile" data-mode="mobile">Mobil / İşçi</button>
+        <button type="button" id="btn-desktop" data-mode="desktop" aria-pressed="false">Masaüstü / İşveren</button>
+        <button type="button" id="btn-mobile" class="is-active" data-mode="mobile" aria-pressed="true">Mobil / İşçi</button>
       </div>
     </header>
 
@@ -872,6 +906,10 @@
           <div class="nav-item" data-panel="team"><i data-lucide="users"></i> Ekip</div>
           <div class="nav-item" data-panel="equipment"><i data-lucide="tractor"></i> Ekipman</div>
           <div class="nav-item" data-panel="settings"><i data-lucide="settings"></i> Ayarlar</div>
+          <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+            <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+            <span>Daralt</span>
+          </button>
         </aside>
 
         <main class="main" id="main">
@@ -1198,10 +1236,28 @@
         document.body.classList.toggle("mode-mobile", mode === "mobile");
         btnD.classList.toggle("is-active", mode === "desktop");
         btnM.classList.toggle("is-active", mode === "mobile");
+        btnD.setAttribute("aria-pressed", mode === "desktop" ? "true" : "false");
+        btnM.setAttribute("aria-pressed", mode === "mobile" ? "true" : "false");
         if (window.lucide) lucide.createIcons();
       }
       btnD.addEventListener("click", function () { setMode("desktop"); });
       btnM.addEventListener("click", function () { setMode("mobile"); });
+
+      var sidebar = document.querySelector(".sidebar");
+      var collapseBtn = document.querySelector("#sidebar-collapse");
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener("click", function() {
+          sidebar.classList.toggle("is-collapsed");
+          var ico = collapseBtn.querySelector("[data-lucide]");
+          if (sidebar.classList.contains("is-collapsed")) {
+            ico.setAttribute("data-lucide", "panel-right-close");
+          } else {
+            ico.setAttribute("data-lucide", "panel-left-close");
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+      setMode("mobile");
 
       var mHeader = document.getElementById("m-header-title");
       var mTasks = document.getElementById("m-tasks");

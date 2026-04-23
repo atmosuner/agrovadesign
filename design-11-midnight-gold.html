@@ -54,7 +54,7 @@
     body.view-mobile .stage--mobile { display: flex; }
     /* —— Desktop layout —— */
     .desktop { display: flex; width: 100%; max-width: 1280px; min-height: calc(100vh - 64px); background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 12px; overflow: hidden; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45); }
-    .sidebar { width: var(--sidebar-w); flex-shrink: 0; background: #141414; border-right: 1px solid var(--c-border); display: flex; flex-direction: column; }
+    .sidebar { width: var(--sidebar-w); flex-shrink: 0; background: #141414; border-right: 1px solid var(--c-border); display: flex; flex-direction: column; min-height: 0; align-self: stretch; }
     .sidebar__brand { padding: 20px 18px 16px; border-bottom: 1px solid var(--c-border); background: linear-gradient(90deg, rgba(201, 168, 76, 0.12) 0%, transparent 100%); }
     .sidebar__logo { font-size: 18px; font-weight: 700; letter-spacing: 0.04em; color: var(--c-primary); }
     .sidebar__sub { font-size: 11px; color: var(--c-muted); margin-top: 4px; }
@@ -329,16 +329,36 @@
       font-size: 13px;
     }
     .info-row span:first-child { color: var(--c-muted); }
+
+    .sidebar { transition: width 0.25s ease; overflow: hidden; }
+    .sidebar.is-collapsed { width: 64px; }
+    .sidebar.is-collapsed .nav__item { font-size: 0; gap: 0; justify-content: center; padding: 0.65rem; }
+    .sidebar.is-collapsed .nav__item i,
+    .sidebar.is-collapsed .nav__item svg,
+    .sidebar.is-collapsed .nav__item [data-lucide] { font-size: initial; width: 18px; height: 18px; }
+    .sidebar.is-collapsed .sidebar__brand { justify-content: center; padding: 0.5rem 0 1rem; }
+    .sidebar.is-collapsed .sidebar__logo,
+    .sidebar.is-collapsed .sidebar__sub { display: none; }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--c-border, rgba(0,0,0,0.1));
+      border-radius: 8px; cursor: pointer;
+      color: var(--c-muted, #666); font-family: inherit; font-size: 0.75rem;
+      transition: background 0.2s; gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128,128,128,0.1); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
   </style>
 </head>
-<body>
+<body class="view-mobile">
   <div class="app-shell">
     <header class="view-toggle" role="navigation" aria-label="Görünüm">
       <div class="view-toggle__inner">
-        <button type="button" class="view-toggle__btn is-active" data-view="desktop" id="btnViewDesktop" aria-pressed="true">
+        <button type="button" class="view-toggle__btn" data-view="desktop" id="btnViewDesktop" aria-pressed="false">
           <i data-lucide="monitor"></i> Masaüstü / Sahip
         </button>
-        <button type="button" class="view-toggle__btn" data-view="mobile" id="btnViewMobile" aria-pressed="false">
+        <button type="button" class="view-toggle__btn is-active" data-view="mobile" id="btnViewMobile" aria-pressed="true">
           <i data-lucide="smartphone"></i> Mobil / İşçi
         </button>
       </div>
@@ -381,6 +401,10 @@
               <span>Ayarlar</span>
             </button>
           </nav>
+          <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+            <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+            <span>Daralt</span>
+          </button>
         </aside>
         <main class="main-panel">
           <div class="main-panel__header">
@@ -919,6 +943,21 @@
         alert('Bildirim gönderildi — kategori: ' + (cat || '-') + ' (prototip).');
         refreshIcons();
       });
+
+      var sidebar = document.querySelector('.sidebar');
+      var collapseBtn = document.querySelector('#sidebar-collapse');
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener('click', function() {
+          sidebar.classList.toggle('is-collapsed');
+          var ico = collapseBtn.querySelector('[data-lucide]');
+          if (sidebar.classList.contains('is-collapsed')) {
+            ico.setAttribute('data-lucide', 'panel-right-close');
+          } else {
+            ico.setAttribute('data-lucide', 'panel-left-close');
+          }
+          refreshIcons();
+        });
+      }
 
       showDesktopPanel('bugun');
       showMobilePanel('m-tasks');

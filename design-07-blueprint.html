@@ -112,7 +112,31 @@
       background: var(--surface);
       border-right: 1px solid var(--border);
       padding: 16px 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      transition: width 0.25s ease;
+      overflow: hidden;
     }
+    .sidebar.is-collapsed { width: 64px; }
+    .sidebar.is-collapsed + .main-area { max-width: calc(100vw - 64px); }
+    .sidebar.is-collapsed .nav-label { display: none; }
+    .sidebar.is-collapsed .nav-item { font-size: 0; gap: 0; justify-content: center; padding: 0.65rem; }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg,
+    .sidebar.is-collapsed .nav-item [data-lucide] { font-size: initial; width: 18px; height: 18px; }
+    .sidebar.is-collapsed .sidebar-brand span { display: none; }
+    .sidebar.is-collapsed .sidebar-brand { justify-content: center; padding: 0.5rem 0 1rem; }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+      border-radius: 8px; cursor: pointer;
+      color: var(--color-text-secondary, #666); font-family: inherit; font-size: 0.75rem;
+      transition: background 0.2s; gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128,128,128,0.1); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
     .nav-label {
       font-size: 0.65rem;
       font-weight: 600;
@@ -671,11 +695,11 @@
       <span class="mono" style="font-size:0.65rem;color:var(--text-muted);margin-left:4px;">BLUEPRINT</span>
     </div>
     <div class="view-toggle" role="group" aria-label="Görünüm">
-      <button type="button" id="btn-desktop" class="active" data-view="desktop">
+      <button type="button" id="btn-desktop" data-view="desktop" aria-pressed="false">
         <i data-lucide="monitor" style="width:16px;height:16px;"></i>
         Masaüstü / Sahip
       </button>
-      <button type="button" id="btn-mobile" data-view="mobile">
+      <button type="button" id="btn-mobile" class="active" data-view="mobile" aria-pressed="true">
         <i data-lucide="smartphone" style="width:16px;height:16px;"></i>
         Mobil / İşçi
       </button>
@@ -683,7 +707,7 @@
   </header>
 
   <!-- DESKTOP -->
-  <div id="desktop-root" class="desktop-shell">
+  <div id="desktop-root" class="desktop-shell hidden">
     <aside class="sidebar">
       <div class="nav-label">Modüller</div>
       <button type="button" class="nav-item active" data-tab="today">
@@ -706,6 +730,10 @@
       </button>
       <button type="button" class="nav-item" data-tab="settings">
         <i data-lucide="settings"></i> Ayarlar
+      </button>
+      <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+        <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+        <span>Daralt</span>
       </button>
     </aside>
     <main class="main-area">
@@ -1014,7 +1042,7 @@
   </div>
 
   <!-- MOBILE -->
-  <div id="mobile-root" class="mobile-wrap hidden">
+  <div id="mobile-root" class="mobile-wrap">
     <div class="phone">
       <div class="phone-notch">AGROVA — İŞÇİ UÇ</div>
       <div class="phone-content">
@@ -1172,17 +1200,38 @@
           mobileRoot.classList.add("hidden");
           btnDesktop.classList.add("active");
           btnMobile.classList.remove("active");
+          btnDesktop.setAttribute("aria-pressed", "true");
+          btnMobile.setAttribute("aria-pressed", "false");
         } else {
           desktopRoot.classList.add("hidden");
           mobileRoot.classList.remove("hidden");
           btnMobile.classList.add("active");
           btnDesktop.classList.remove("active");
+          btnMobile.setAttribute("aria-pressed", "true");
+          btnDesktop.setAttribute("aria-pressed", "false");
           refreshIcons();
         }
       }
 
       btnDesktop.addEventListener("click", function () { setView("desktop"); });
       btnMobile.addEventListener("click", function () { setView("mobile"); });
+
+      var sidebar = document.querySelector(".sidebar");
+      var collapseBtn = document.querySelector("#sidebar-collapse");
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener("click", function() {
+          sidebar.classList.toggle("is-collapsed");
+          var ico = collapseBtn.querySelector("[data-lucide]");
+          if (sidebar.classList.contains("is-collapsed")) {
+            ico.setAttribute("data-lucide", "panel-right-close");
+          } else {
+            ico.setAttribute("data-lucide", "panel-left-close");
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      setView("mobile");
 
       var navItems = document.querySelectorAll(".nav-item");
       var panels = document.querySelectorAll(".main-area .panel");

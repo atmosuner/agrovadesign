@@ -53,6 +53,8 @@
       background: var(--surface);
       border-right: 1px solid var(--border);
       padding: 20px 12px; display: flex; flex-direction: column; gap: 8px;
+      min-height: 0;
+      align-self: stretch;
     }
     .sidebar__logo { display: flex; align-items: center; gap: 10px; padding: 8px 12px 20px; }
     .sidebar__logo span { font-weight: 800; font-size: 18px; color: var(--text); }
@@ -231,18 +233,37 @@
     }
     .detail-sheet h3 { margin: 0 0 8px; }
     .detail-close { position: absolute; right: 16px; top: 12px; border: 0; background: transparent; cursor: pointer; }
+
+    .sidebar { transition: width 0.25s ease; overflow: hidden; }
+    .sidebar.is-collapsed { width: 64px; }
+    .sidebar.is-collapsed .nav-item { font-size: 0; gap: 0; justify-content: center; padding: 0.65rem; }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg,
+    .sidebar.is-collapsed .nav-item [data-lucide] { font-size: initial; width: 18px; height: 18px; }
+    .sidebar.is-collapsed .sidebar__logo { justify-content: center; padding: 0.5rem 0 1rem; }
+    .sidebar.is-collapsed .sidebar__logo span { display: none; }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--border, rgba(0,0,0,0.1));
+      border-radius: 8px; cursor: pointer;
+      color: var(--text-muted, #666); font-family: inherit; font-size: 0.75rem;
+      transition: background 0.2s; gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128,128,128,0.1); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
   </style>
 </head>
 <body>
   <div class="toggle-bar">
     <span class="toggle-bar__brand">Agrova</span>
     <div class="toggle-seg" role="group" aria-label="Görünüm seç">
-      <button type="button" id="btn-desktop" aria-pressed="true">Masaüstü / Sahip Görünümü</button>
-      <button type="button" id="btn-mobile" aria-pressed="false">Mobil / İşçi Görünümü</button>
+      <button type="button" id="btn-desktop" aria-pressed="false">Masaüstü / Sahip Görünümü</button>
+      <button type="button" id="btn-mobile" aria-pressed="true">Mobil / İşçi Görünümü</button>
     </div>
   </div>
 
-  <div id="view-desktop">
+  <div id="view-desktop" class="hidden">
     <div class="desktop-shell">
       <aside class="sidebar" aria-label="Ana menü">
         <div class="sidebar__logo">
@@ -269,6 +290,10 @@
         </button>
         <button type="button" class="nav-item" data-panel="ayarlar" role="tab" aria-selected="false">
           <i data-lucide="settings"></i> Ayarlar
+        </button>
+        <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+          <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+          <span>Daralt</span>
         </button>
       </aside>
 
@@ -579,7 +604,7 @@
     </div>
   </div>
 
-  <div id="view-mobile" class="hidden">
+  <div id="view-mobile">
     <div class="mobile-wrap">
       <div class="phone" aria-label="Mobil cihaz önizleme">
         <div class="phone__notch" aria-hidden="true"></div>
@@ -830,6 +855,21 @@
         fb.textContent = "Kayıt alındı: " + selectedCat + " — " + txt.slice(0, 40) + (txt.length > 40 ? "…" : "");
       });
       document.getElementById("btn-save-settings").addEventListener("click", function () { alert("Ayarlar kaydedildi (prototip)."); });
+
+      var sidebar = document.querySelector(".sidebar");
+      var collapseBtn = document.querySelector("#sidebar-collapse");
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener("click", function () {
+          sidebar.classList.toggle("is-collapsed");
+          var ico = collapseBtn.querySelector("[data-lucide]");
+          if (sidebar.classList.contains("is-collapsed")) {
+            ico.setAttribute("data-lucide", "panel-right-close");
+          } else {
+            ico.setAttribute("data-lucide", "panel-left-close");
+          }
+          initIcons();
+        });
+      }
     })();
   </script>
 </body>

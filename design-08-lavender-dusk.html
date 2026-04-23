@@ -63,7 +63,30 @@
       width: 260px; min-height: 100%; background: var(--surface);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column; flex-shrink: 0;
+      transition: width 0.25s ease;
+      overflow: hidden;
     }
+    .sidebar.is-collapsed { width: 64px; }
+    .sidebar.is-collapsed .sidebar-header h1 { font-size: 0; margin: 0; line-height: 0; }
+    .sidebar.is-collapsed .sidebar-header p { display: none; }
+    .sidebar.is-collapsed .sidebar-header { padding: 16px 8px; }
+    .sidebar.is-collapsed .nav-item { font-size: 0; gap: 0; justify-content: center; padding: 0.65rem; }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg,
+    .sidebar.is-collapsed .nav-item [data-lucide] { font-size: initial; width: 18px; height: 18px; }
+    .sidebar.is-collapsed .nav-item .badge { display: none; }
+    .sidebar.is-collapsed .sidebar-brand span { display: none; }
+    .sidebar.is-collapsed .sidebar-brand { justify-content: center; padding: 0.5rem 0 1rem; }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+      border-radius: 8px; cursor: pointer;
+      color: var(--color-text-secondary, #666); font-family: inherit; font-size: 0.75rem;
+      transition: background 0.2s; gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128,128,128,0.1); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
     .sidebar-header {
       padding: 24px 20px;
       background: linear-gradient(145deg, #7C3AED 0%, #6D28D9 50%, #5B21B6 100%);
@@ -260,13 +283,13 @@
   <div class="view-toggle-wrap">
     <div class="logo-mini"><span class="dot"></span><strong>Agrova</strong></div>
     <span>Görünüm</span>
-    <div class="seg" id="viewSeg">
-      <button type="button" class="active" data-view="desktop">Masaüstü / İşveren</button>
-      <button type="button" data-view="mobile">Mobil / İşçi</button>
+    <div class="seg" id="viewSeg" role="group" aria-label="Görünüm">
+      <button type="button" data-view="desktop" aria-pressed="false">Masaüstü / İşveren</button>
+      <button type="button" class="active" data-view="mobile" aria-pressed="true">Mobil / İşçi</button>
     </div>
   </div>
 
-  <div id="desktopView">
+  <div id="desktopView" class="hidden">
     <aside class="sidebar">
       <div class="sidebar-header">
         <h1>Agrova</h1>
@@ -281,6 +304,10 @@
         <button class="nav-item" data-panel="equip"><i data-lucide="tractor"></i> Ekipman</button>
         <button class="nav-item" data-panel="settings"><i data-lucide="settings"></i> Ayarlar</button>
       </nav>
+      <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+        <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+        <span>Daralt</span>
+      </button>
     </aside>
     <main class="main-desk">
       <section class="panel" id="panel-dashboard">
@@ -503,7 +530,7 @@
     </main>
   </div>
 
-  <div id="mobileView" class="hidden">
+  <div id="mobileView">
     <div class="phone-frame">
       <div class="m-header">
         <h1 id="mTitle">Görevler</h1>
@@ -665,11 +692,29 @@
       seg && seg.addEventListener("click", (e) => {
         const b = e.target.closest("button");
         if (!b || !b.dataset.view) return;
-        seg.querySelectorAll("button").forEach((x) => x.classList.remove("active"));
+        seg.querySelectorAll("button").forEach((x) => {
+          x.classList.remove("active");
+          x.setAttribute("aria-pressed", "false");
+        });
         b.classList.add("active");
+        b.setAttribute("aria-pressed", "true");
         if (b.dataset.view === "desktop") { desk && desk.classList.remove("hidden"); mob && mob.classList.add("hidden"); }
         else { desk && desk.classList.add("hidden"); mob && mob.classList.remove("hidden"); window.__refreshLucide && window.__refreshLucide(); }
       });
+      var sidebar = document.querySelector(".sidebar");
+      var collapseBtn = document.querySelector("#sidebar-collapse");
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener("click", function() {
+          sidebar.classList.toggle("is-collapsed");
+          var ico = collapseBtn.querySelector("[data-lucide]");
+          if (sidebar.classList.contains("is-collapsed")) {
+            ico.setAttribute("data-lucide", "panel-right-close");
+          } else {
+            ico.setAttribute("data-lucide", "panel-left-close");
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
       const deskNav = document.getElementById("deskNav");
       const panels = {
         dashboard: document.getElementById("panel-dashboard"),

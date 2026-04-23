@@ -105,7 +105,30 @@
       display: flex;
       flex-direction: column;
       min-height: calc(100vh - 56px);
+      transition: width 0.25s ease, min-width 0.25s ease;
+      overflow: hidden;
     }
+    .sidebar.is-collapsed { width: 64px; min-width: 64px; }
+    .sidebar.is-collapsed .nav-item { font-size: 0; gap: 0; justify-content: center; padding: 0.65rem; }
+    .sidebar.is-collapsed .nav-item i,
+    .sidebar.is-collapsed .nav-item svg,
+    .sidebar.is-collapsed .nav-item [data-lucide] { font-size: initial; width: 18px; height: 18px; }
+    .sidebar.is-collapsed .sidebar-hero p { display: none; }
+    .sidebar.is-collapsed .brand { font-size: 0; justify-content: center; gap: 0; padding: 0; }
+    .sidebar.is-collapsed .brand i,
+    .sidebar.is-collapsed .brand svg,
+    .sidebar.is-collapsed .brand [data-lucide] { font-size: initial; width: 22px; height: 22px; }
+    .sidebar.is-collapsed .sidebar-hero { padding: 16px 12px; }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--border, rgba(0,0,0,0.1));
+      border-radius: 8px; cursor: pointer;
+      color: var(--text-secondary, #666); font-family: inherit; font-size: 0.75rem;
+      transition: background 0.2s; gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128,128,128,0.1); }
+    .sidebar.is-collapsed .collapse-btn span { display: none; }
     .sidebar-hero {
       padding: 24px 20px;
       background: var(--grad-primary);
@@ -534,13 +557,13 @@
     <header class="view-bar">
       <h1>Agrova</h1>
       <div class="toggle" role="group" aria-label="Görünüm">
-        <button type="button" id="btn-desktop" class="active">Masaüstü / Sahip</button>
-        <button type="button" id="btn-mobile">Mobil / İşçi</button>
+        <button type="button" id="btn-desktop" aria-pressed="false">Masaüstü / Sahip</button>
+        <button type="button" id="btn-mobile" class="active" aria-pressed="true">Mobil / İşçi</button>
       </div>
     </header>
 
     <!-- DESKTOP -->
-    <div id="desktop-wrap" class="desktop-wrap visible">
+    <div id="desktop-wrap" class="desktop-wrap" hidden>
       <aside class="sidebar">
         <div class="sidebar-hero">
           <div class="brand">
@@ -558,6 +581,10 @@
           <button type="button" class="nav-item" data-tab="equip"><i data-lucide="tractor"></i> Ekipman</button>
           <button type="button" class="nav-item" data-tab="settings"><i data-lucide="settings"></i> Ayarlar</button>
         </nav>
+        <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+          <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+          <span>Daralt</span>
+        </button>
       </aside>
 
       <main class="main-desktop">
@@ -754,7 +781,7 @@
     </div>
 
     <!-- MOBILE -->
-    <div id="mobile-wrap" class="mobile-wrap">
+    <div id="mobile-wrap" class="mobile-wrap visible">
       <div class="phone">
         <div class="phone-notch"><span></span></div>
         <div class="phone-header" id="phone-header">
@@ -851,19 +878,42 @@
       function setView(desktop) {
         if (desktop) {
           desktopWrap.classList.add('visible');
+          desktopWrap.removeAttribute('hidden');
           mobileWrap.classList.remove('visible');
+          mobileWrap.setAttribute('hidden', '');
           btnDesktop.classList.add('active');
           btnMobile.classList.remove('active');
+          btnDesktop.setAttribute('aria-pressed', 'true');
+          btnMobile.setAttribute('aria-pressed', 'false');
         } else {
           desktopWrap.classList.remove('visible');
+          desktopWrap.setAttribute('hidden', '');
           mobileWrap.classList.add('visible');
+          mobileWrap.removeAttribute('hidden');
           btnDesktop.classList.remove('active');
           btnMobile.classList.add('active');
+          btnDesktop.setAttribute('aria-pressed', 'false');
+          btnMobile.setAttribute('aria-pressed', 'true');
         }
         if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
       btnDesktop.addEventListener('click', function () { setView(true); });
       btnMobile.addEventListener('click', function () { setView(false); });
+
+      var sidebar = document.querySelector('.sidebar');
+      var collapseBtn = document.querySelector('#sidebar-collapse');
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener('click', function() {
+          sidebar.classList.toggle('is-collapsed');
+          var ico = collapseBtn.querySelector('[data-lucide]');
+          if (sidebar.classList.contains('is-collapsed')) {
+            ico.setAttribute('data-lucide', 'panel-right-close');
+          } else {
+            ico.setAttribute('data-lucide', 'panel-left-close');
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
 
       // Desktop tabs
       const navItems = document.querySelectorAll('#desktop-nav .nav-item');

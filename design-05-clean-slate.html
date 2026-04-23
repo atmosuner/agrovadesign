@@ -98,13 +98,36 @@
     .owner-shell {
       width: 100%;
     }
+    .owner-nav-stack { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; }
     .owner-sidebar {
       width: 220px;
+      min-width: 220px;
       flex-shrink: 0;
       border-right: 1px solid var(--border);
       padding: 20px 12px;
       background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-self: stretch;
+      min-height: 0;
+      transition: width 0.25s ease, min-width 0.25s ease;
+      overflow: hidden;
     }
+    .owner-sidebar.is-collapsed { width: 64px; min-width: 64px; }
+    .owner-sidebar.is-collapsed .nav-item { font-size: 0; gap: 0; justify-content: center; padding: 0.65rem; }
+    .owner-sidebar.is-collapsed .nav-item i,
+    .owner-sidebar.is-collapsed .nav-item svg,
+    .owner-sidebar.is-collapsed .nav-item [data-lucide] { font-size: initial; width: 18px; height: 18px; }
+    .collapse-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 0.5rem; margin-top: auto;
+      background: transparent; border: 1px solid var(--border, rgba(0,0,0,0.1));
+      border-radius: 8px; cursor: pointer;
+      color: var(--text-secondary, #666); font-family: inherit; font-size: 0.75rem;
+      transition: background 0.2s; gap: 0.5rem;
+    }
+    .collapse-btn:hover { background: rgba(128,128,128,0.1); }
+    .owner-sidebar.is-collapsed .collapse-btn span { display: none; }
     .nav-item {
       display: flex;
       align-items: center;
@@ -608,34 +631,40 @@
       <span>Agrova</span>
     </div>
     <div class="mode-switch" role="group" aria-label="Görünüm">
-      <button type="button" id="mode-owner" class="active">Masaüstü / İşveren</button>
-      <button type="button" id="mode-worker">Mobil / İşçi</button>
+      <button type="button" id="mode-owner" aria-pressed="false">Masaüstü / İşveren</button>
+      <button type="button" id="mode-worker" class="active" aria-pressed="true">Mobil / İşçi</button>
     </div>
   </header>
 
   <!-- Owner -->
-  <div id="owner-shell" class="shell owner-shell visible">
+  <div id="owner-shell" class="shell owner-shell" hidden>
     <aside class="owner-sidebar" aria-label="Ana menü">
-      <button type="button" class="nav-item active" data-panel="today">
-        <i data-lucide="layout-dashboard"></i> Bugün
-      </button>
-      <button type="button" class="nav-item" data-panel="tasks">
-        <i data-lucide="check-square"></i> Görevler
-      </button>
-      <button type="button" class="nav-item" data-panel="fields">
-        <i data-lucide="map-pin"></i> Alanlar
-      </button>
-      <button type="button" class="nav-item" data-panel="issues">
-        <i data-lucide="alert-circle"></i> Sorunlar
-      </button>
-      <button type="button" class="nav-item" data-panel="team">
-        <i data-lucide="users"></i> Ekip
-      </button>
-      <button type="button" class="nav-item" data-panel="equipment">
-        <i data-lucide="wrench"></i> Ekipman
-      </button>
-      <button type="button" class="nav-item" data-panel="settings">
-        <i data-lucide="settings"></i> Ayarlar
+      <div class="owner-nav-stack">
+        <button type="button" class="nav-item active" data-panel="today">
+          <i data-lucide="layout-dashboard"></i> Bugün
+        </button>
+        <button type="button" class="nav-item" data-panel="tasks">
+          <i data-lucide="check-square"></i> Görevler
+        </button>
+        <button type="button" class="nav-item" data-panel="fields">
+          <i data-lucide="map-pin"></i> Alanlar
+        </button>
+        <button type="button" class="nav-item" data-panel="issues">
+          <i data-lucide="alert-circle"></i> Sorunlar
+        </button>
+        <button type="button" class="nav-item" data-panel="team">
+          <i data-lucide="users"></i> Ekip
+        </button>
+        <button type="button" class="nav-item" data-panel="equipment">
+          <i data-lucide="wrench"></i> Ekipman
+        </button>
+        <button type="button" class="nav-item" data-panel="settings">
+          <i data-lucide="settings"></i> Ayarlar
+        </button>
+      </div>
+      <button type="button" class="collapse-btn" id="sidebar-collapse" aria-label="Menüyü daralt">
+        <i data-lucide="panel-left-close" style="width:18px;height:18px"></i>
+        <span>Daralt</span>
       </button>
     </aside>
     <main class="owner-main">
@@ -809,7 +838,7 @@
   </div>
 
   <!-- Worker phone -->
-  <div id="worker-shell" class="shell worker-wrap">
+  <div id="worker-shell" class="shell worker-wrap visible">
     <div class="phone" aria-label="Mobil önizleme">
       <div class="phone-top">
         <h2 id="phone-title">Görevler</h2>
@@ -896,20 +925,43 @@
       function setMode(isOwner) {
         if (isOwner) {
           ownerShell.classList.add("visible");
+          ownerShell.removeAttribute("hidden");
           workerShell.classList.remove("visible");
+          workerShell.setAttribute("hidden", "");
           btnOwner.classList.add("active");
           btnWorker.classList.remove("active");
+          btnOwner.setAttribute("aria-pressed", "true");
+          btnWorker.setAttribute("aria-pressed", "false");
         } else {
           ownerShell.classList.remove("visible");
+          ownerShell.setAttribute("hidden", "");
           workerShell.classList.add("visible");
+          workerShell.removeAttribute("hidden");
           btnWorker.classList.add("active");
           btnOwner.classList.remove("active");
+          btnOwner.setAttribute("aria-pressed", "false");
+          btnWorker.setAttribute("aria-pressed", "true");
         }
         if (window.lucide) lucide.createIcons();
       }
 
       btnOwner.addEventListener("click", function () { setMode(true); });
       btnWorker.addEventListener("click", function () { setMode(false); });
+
+      var sidebar = document.querySelector(".owner-sidebar");
+      var collapseBtn = document.querySelector("#sidebar-collapse");
+      if (collapseBtn && sidebar) {
+        collapseBtn.addEventListener("click", function() {
+          sidebar.classList.toggle("is-collapsed");
+          var ico = collapseBtn.querySelector("[data-lucide]");
+          if (sidebar.classList.contains("is-collapsed")) {
+            ico.setAttribute("data-lucide", "panel-right-close");
+          } else {
+            ico.setAttribute("data-lucide", "panel-left-close");
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
 
       // Owner panels
       const navItems = document.querySelectorAll(".nav-item");
