@@ -318,85 +318,94 @@
 
     /* —— mobile —— */
     .mobile-wrap {
-      display: none; flex: 1; justify-content: center; padding: 24px 16px 40px; align-items: flex-start;
+      display: none; flex: 1; justify-content: center; padding: 1rem 1rem 1.5rem; align-items: flex-start;
     }
     [data-mode="mobile"] .mobile-wrap { display: flex; }
     [data-mode="mobile"] .desktop { display: none; }
 
     .phone {
-      width: 100%; max-width: 390px; min-height: 720px;
-      border: 3px solid var(--color-primary); border-radius: 28px;
+      width: 100%; max-width: 320px; min-height: 540px; max-height: min(70vh, 640px);
+      border: 3px solid var(--color-primary); border-radius: 24px;
       background: var(--color-bg);
       box-shadow: 0 20px 50px rgba(0,0,0,0.12), inset 0 0 0 1px var(--color-border);
       display: flex; flex-direction: column; overflow: hidden; position: relative;
     }
     .phone-notch {
-      height: 22px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; flex-shrink: 0;
+      height: 20px; display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0;
     }
-    .phone-notch span { width: 96px; height: 5px; background: #292524; border-radius: 4px; opacity: 0.4; }
+    .phone-notch span { width: 72px; height: 20px; background: #292524; border-radius: 10px; opacity: 0.35; }
     .mobile-top {
-      display: flex; align-items: center; justify-content: space-between; padding: 4px 16px 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between; padding: 0.35rem 0.6rem 0.5rem; flex-shrink: 0;
     }
     .back-btn {
       display: none; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: var(--color-primary);
       background: none; border: none; cursor: pointer; font-family: var(--font); padding: 4px 0;
     }
     .back-btn.is-visible { display: inline-flex; }
-    .mobile-title { font-weight: 700; font-size: 1rem; }
-    .mobile-screens { flex: 1; overflow: auto; padding: 0 16px 88px; }
+    .mobile-title { font-weight: 700; font-size: 0.9rem; }
+    .mobile-screens { flex: 1; overflow: auto; padding: 0.6rem; padding-bottom: 72px; }
     .m-panel { display: none; }
     .m-panel.is-active { display: block; animation: fade 0.2s ease; }
 
-    .m-task { margin-bottom: 10px; border-radius: 14px; background: var(--color-surface); border: 1px solid var(--color-border);
-      padding: 14px; box-shadow: var(--shadow); cursor: pointer; text-align: left; width: 100%; font-family: var(--font); }
+    .m-task { margin-bottom: 0.45rem; border-radius: 14px; background: var(--color-surface); border: 1px solid var(--color-border);
+      padding: 0.65rem; box-shadow: var(--shadow); cursor: pointer; text-align: left; width: 100%; font-family: var(--font); }
     .m-task .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-    .m-task h4 { margin: 0; font-size: 0.95rem; }
-    .strip { height: 3px; border-radius: 2px; margin-top: 10px; background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); opacity: 0.85; }
+    .m-task h4 { margin: 0; font-size: 0.78rem; }
+    .m-task .meta-line { font-size: 0.6rem; color: var(--color-text-muted); margin-top: 4px; }
+    .m-task-lead { font-size: 0.65rem; }
+    .m-task .row .chip { font-size: 0.65rem; padding: 2px 6px; }
+    .m-report-h2 { font-size: 0.9rem; }
+    .m-report-sub { font-size: 0.65rem; }
+    .strip { height: 3px; border-radius: 2px; margin-top: 8px; background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); opacity: 0.85; }
 
     .m-detail { padding-bottom: 8px; }
     .m-detail .big-btn {
-      width: 100%; height: 72px; border-radius: var(--radius-pill); font-size: 1rem; font-weight: 700;
+      width: 100%; height: 56px; border-radius: var(--radius-pill); font-size: 0.85rem; font-weight: 700;
       border: none; font-family: var(--font); margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
     }
+    .m-detail .big-btn i, .m-detail .big-btn svg, .m-detail .big-btn [data-lucide] { width: 18px; height: 18px; }
+    .m-detail-kicker { font-size: 0.65rem; }
+    .m-detail-title { font-size: 0.95rem; }
+    .m-detail-body { font-size: 0.75rem; }
     .m-detail .start { background: var(--color-primary); color: #fff; }
     .m-detail .complete { background: var(--color-primary); color: #fff; }
     .m-detail .secondary { background: var(--color-surface-1); color: var(--color-secondary); border: 1px solid var(--color-secondary); height: 48px; }
 
-    .m-history h4 { font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 16px 0 8px; }
+    .m-history h4 { font-size: 0.7rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 12px 0 6px; }
     .m-history h4:first-child { margin-top: 0; }
-    .hist-item { padding: 12px; border-radius: 12px; background: var(--color-surface); border: 1px solid var(--color-border); margin-bottom: 8px; font-size: 0.9rem; }
+    .hist-item { padding: 0.5rem 0.6rem; border-radius: 12px; background: var(--color-surface); border: 1px solid var(--color-border); margin-bottom: 8px; font-size: 0.72rem; }
 
     .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .cat {
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 16px 8px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0.6rem 0.4rem;
       border-radius: 14px; background: var(--color-surface); border: 2px solid var(--color-border); cursor: pointer; font-family: var(--font);
-      color: var(--color-text); font-size: 0.8rem; font-weight: 600; transition: border-color 0.15s, background 0.15s;
+      color: var(--color-text); font-size: 0.62rem; font-weight: 600; transition: border-color 0.15s, background 0.15s;
     }
-    .cat i { color: var(--color-secondary); }
+    .cat i, .cat svg, .cat [data-lucide] { color: var(--color-secondary); width: 18px; height: 18px; }
     .cat:hover, .cat:focus-visible { border-color: var(--color-secondary); background: #ECFEFF; outline: none; }
 
     .m-profile .banner {
-      height: 88px; border-radius: 16px; margin: 0 0 40px; position: relative;
+      height: 72px; border-radius: 14px; margin: 0 0 36px; position: relative;
       background: linear-gradient(120deg, var(--color-primary), #7F1D1D, var(--color-secondary));
     }
     .m-profile .p-avatar {
-      position: absolute; left: 50%; bottom: -28px; transform: translateX(-50%);
-      width: 72px; height: 72px; border-radius: 50%; background: var(--color-surface); border: 3px solid var(--color-surface-2);
-      display: grid; place-items: center; font-weight: 800; color: var(--color-primary);
+      position: absolute; left: 50%; bottom: -20px; transform: translateX(-50%);
+      width: 64px; height: 64px; border-radius: 50%; background: var(--color-surface); border: 3px solid var(--color-surface-2);
+      display: grid; place-items: center; font-weight: 800; color: var(--color-primary); font-size: 0.9rem;
     }
     .m-profile .p-name { text-align: center; font-weight: 700; margin-top: 8px; }
     .m-profile .p-meta { text-align: center; color: var(--color-text-secondary); font-size: 0.85rem; margin-bottom: 20px; }
 
     .tabbar {
-      position: absolute; left: 0; right: 0; bottom: 0; height: 72px; background: var(--color-surface);
+      position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: var(--color-surface);
       border-top: 1px solid var(--color-border);
       display: flex; justify-content: space-around; align-items: center; padding: 0 4px; z-index: 10;
     }
     .tabbar button {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; height: 100%;
-      border: none; background: none; color: var(--color-text-muted); font-family: var(--font); font-size: 0.65rem; font-weight: 600; cursor: pointer; padding: 0 2px;
+      border: none; background: none; color: var(--color-text-muted); font-family: var(--font); font-size: 0.55rem; font-weight: 600; cursor: pointer; padding: 0 2px;
     }
-    .tabbar button i { width: 22px; height: 22px; }
+    .tabbar button i, .tabbar button svg, .tabbar button .tb-icon { width: 18px; height: 18px; }
     .tabbar button[aria-current="true"] { color: var(--color-secondary); }
     .tabbar button[aria-current="true"] .tb-icon { color: var(--color-secondary); }
 
@@ -869,13 +878,13 @@
         </div>
         <div class="mobile-screens" id="mScreens">
           <div class="m-panel is-active" id="m-tasks" data-mtab="list">
-            <p style="color:var(--color-text-secondary); font-size:0.85rem; margin:0 0 12px;">bugünkü atanan işlerin</p>
+            <p class="m-task-lead" style="color:var(--color-text-secondary); margin:0 0 12px;">bugünkü atanan işlerin</p>
             <button type="button" class="m-task" data-open-detail>
               <div class="row">
                 <h4>İlaçlama · Armut Bahçesi C2</h4>
                 <span class="chip chip-prog">devam</span>
               </div>
-              <div style="font-size:0.8rem; color:var(--color-text-muted); margin-top:4px;">vade: bugün 16:00</div>
+              <div class="meta-line">vade: bugün 16:00</div>
               <div class="strip" aria-hidden="true"></div>
             </button>
             <button type="button" class="m-task" data-open-detail>
@@ -883,7 +892,7 @@
                 <h4>Sulama · Kiraz Tarlası B1</h4>
                 <span class="chip chip-todo">yapılacak</span>
               </div>
-              <div style="font-size:0.8rem; color:var(--color-text-muted); margin-top:4px;">gübreleme öncesi</div>
+              <div class="meta-line">gübreleme öncesi</div>
               <div class="strip" aria-hidden="true"></div>
             </button>
             <button type="button" class="m-task" data-open-detail>
@@ -891,23 +900,23 @@
                 <h4>Budama · Elma Bahçesi A3</h4>
                 <span class="chip chip-todo">yapılacak</span>
               </div>
-              <div style="font-size:0.8rem; color:var(--color-text-muted); margin-top:4px;">2. bölge sıra 4</div>
+              <div class="meta-line">2. bölge sıra 4</div>
               <div class="strip" aria-hidden="true"></div>
             </button>
             <p class="note">Bir karta dokunun — ayrıntı ve büyük eylem düğmeleri açılır (prototip).</p>
           </div>
           <div class="m-panel" id="m-detail" data-mtab="detail">
             <div class="m-detail">
-              <p style="color:var(--color-text-secondary); font-size:0.85rem; margin:0 0 8px;">Görev no · G-1924</p>
-              <h2 style="font-size:1.15rem; margin:0 0 10px; letter-spacing:-0.02em;">İlaçlama</h2>
-              <p style="margin:0 0 6px; color:var(--color-text);"><strong>parsel:</strong> Armut Bahçesi C2</p>
-              <p style="margin:0 0 16px; color:var(--color-text-secondary); font-size:0.9rem;">Kültür: Armut — örtüaltı tavsiye edilen ilaçlama, rüzgâr &lt; 3 m/s bekle.</p>
+              <p class="m-detail-kicker" style="color:var(--color-text-secondary); margin:0 0 8px;">Görev no · G-1924</p>
+              <h2 class="m-detail-title" style="margin:0 0 10px; letter-spacing:-0.02em;">İlaçlama</h2>
+              <p class="m-detail-body" style="margin:0 0 6px; color:var(--color-text);"><strong>parsel:</strong> Armut Bahçesi C2</p>
+              <p class="m-detail-body" style="margin:0 0 16px; color:var(--color-text-secondary);">Kültür: Armut — örtüaltı tavsiye edilen ilaçlama, rüzgâr &lt; 3 m/s bekle.</p>
               <div class="divider-geo" style="margin:16px 0" aria-hidden="true"></div>
               <button type="button" class="big-btn start" id="btnStart">
-                <i data-lucide="play" width="22" height="22" aria-hidden="true"></i> başlat
+                <i data-lucide="play" width="18" height="18" aria-hidden="true"></i> başlat
               </button>
               <button type="button" class="big-btn complete" id="btnComplete">
-                <i data-lucide="check-circle" width="22" height="22" aria-hidden="true"></i> tamamlandı işaretle
+                <i data-lucide="check-circle" width="18" height="18" aria-hidden="true"></i> tamamlandı işaretle
               </button>
               <button type="button" class="btn secondary" style="width:100%; height:48px; border-radius:12px; font-weight:600;">foto ekle (isteğe bağlı)</button>
             </div>
@@ -922,20 +931,20 @@
             </div>
           </div>
           <div class="m-panel" id="m-report" data-mtab="report">
-            <h2 style="font-size:1rem; margin:0 0 10px;">sorun bildir</h2>
-            <p style="color:var(--color-text-secondary); font-size:0.85rem; margin:0 0 14px;">Kategori seçin; ekip sizi geri arar.</p>
+            <h2 class="m-report-h2" style="margin:0 0 10px;">sorun bildir</h2>
+            <p class="m-report-sub" style="color:var(--color-text-secondary); margin:0 0 14px;">Kategori seçin; ekip sizi geri arar.</p>
             <div class="cat-grid">
               <button type="button" class="cat" aria-label="Ekipman arızası">
-                <i data-lucide="wrench" width="24" height="24" aria-hidden="true"></i> ekipman
+                <i data-lucide="wrench" width="18" height="18" aria-hidden="true"></i> ekipman
               </button>
               <button type="button" class="cat" aria-label="Sulama sorunu">
-                <i data-lucide="droplets" width="24" height="24" aria-hidden="true"></i> sulama
+                <i data-lucide="droplets" width="18" height="18" aria-hidden="true"></i> sulama
               </button>
               <button type="button" class="cat" aria-label="Zararlı veya hastalık">
-                <i data-lucide="bug" width="24" height="24" aria-hidden="true"></i> zararlı
+                <i data-lucide="bug" width="18" height="18" aria-hidden="true"></i> zararlı
               </button>
               <button type="button" class="cat" aria-label="Güvenlik veya kaza">
-                <i data-lucide="shield-alert" width="24" height="24" aria-hidden="true"></i> güvenlik
+                <i data-lucide="shield-alert" width="18" height="18" aria-hidden="true"></i> güvenlik
               </button>
             </div>
             <p class="note">Seçim sonrası kısa form (prototipte sadece görsel).</p>
@@ -955,19 +964,19 @@
         </div>
         <nav class="tabbar" id="mTabbar" aria-label="Alt menü" role="tablist">
           <button type="button" role="tab" data-goto="list" aria-current="true" id="mtab0">
-            <i data-lucide="list-todo" class="tb-icon" width="22" height="22" aria-hidden="true"></i>
+            <i data-lucide="list-todo" class="tb-icon" width="18" height="18" aria-hidden="true"></i>
             görevler
           </button>
           <button type="button" role="tab" data-goto="history" aria-current="false" id="mtab1">
-            <i data-lucide="history" class="tb-icon" width="22" height="22" aria-hidden="true"></i>
+            <i data-lucide="history" class="tb-icon" width="18" height="18" aria-hidden="true"></i>
             geçmiş
           </button>
           <button type="button" role="tab" data-goto="report" aria-current="false" id="mtab2">
-            <i data-lucide="alert-triangle" class="tb-icon" width="22" height="22" aria-hidden="true"></i>
+            <i data-lucide="alert-triangle" class="tb-icon" width="18" height="18" aria-hidden="true"></i>
             sorun bildir
           </button>
           <button type="button" role="tab" data-goto="profile" aria-current="false" id="mtab3">
-            <i data-lucide="user" class="tb-icon" width="22" height="22" aria-hidden="true"></i>
+            <i data-lucide="user" class="tb-icon" width="18" height="18" aria-hidden="true"></i>
             profil
           </button>
         </nav>

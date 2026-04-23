@@ -68,7 +68,7 @@
     .shell { padding-top: 52px; }
 
     .desktop-shell { display: flex; min-height: calc(100vh - 52px); }
-    .mobile-shell { display: none; justify-content: center; padding: 1.5rem; padding-bottom: 3rem; }
+    .mobile-shell { display: none; justify-content: center; padding: 1rem 1rem 1.5rem; }
 
     body.mode-mobile .desktop-shell { display: none; }
     body.mode-mobile .mobile-shell { display: flex; }
@@ -373,17 +373,20 @@
 
     /* ——— Mobile phone ——— */
     .phone {
-      width: 390px; max-width: 100%;
+      display: flex; flex-direction: column; width: 100%; max-width: 320px;
       background: #5C2E12;
-      border-radius: 36px; padding: 10px;
+      border-radius: 30px; padding: 8px;
       box-shadow: 0 0 0 2px #8B4513, 0 25px 60px rgba(183, 65, 14, 0.45), 0 0 40px rgba(212, 164, 76, 0.25);
     }
+    .phone-notch { height: 20px; display: flex; align-items: center; justify-content: center; }
+    .phone-notch span { display: block; width: 72px; height: 5px; background: #3D1F0A; border-radius: 4px; }
     .phone-screen {
       background: var(--color-bg);
-      border-radius: 28px; overflow: hidden; height: 720px; display: flex; flex-direction: column;
+      border-radius: 24px; overflow: hidden; min-height: 540px; max-height: min(70vh, 640px);
+      display: flex; flex-direction: column; flex: 1; min-width: 0;
     }
     .m-header {
-      padding: 0.9rem 1rem 0.7rem;
+      padding: 0.65rem 0.75rem;
       background: linear-gradient(145deg, #B7410E 0%, #8E3009 100%);
       color: #FFF8F0;
       position: relative; overflow: hidden;
@@ -398,10 +401,10 @@
       position: absolute; top: 30px; left: 40px; width: 60px; height: 60px;
       background: radial-gradient(circle, rgba(212, 164, 76, 0.2) 0%, transparent 60%);
     }
-    .m-header h1 { position: relative; z-index: 1; font-size: 1.1rem; font-weight: 800; }
-    .m-header p { position: relative; z-index: 1; font-size: 0.75rem; opacity: 0.9; }
+    .m-header h1 { position: relative; z-index: 1; font-size: 0.9rem; font-weight: 800; }
+    .m-header p { position: relative; z-index: 1; font-size: 0.6rem; opacity: 0.9; }
     .phone-body { flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column; }
-    .m-content { flex: 1; overflow: auto; padding: 0.75rem; padding-bottom: 88px; -webkit-overflow-scrolling: touch; }
+    .m-content { flex: 1; overflow: auto; min-height: 0; padding: 0.6rem; padding-bottom: 72px; -webkit-overflow-scrolling: touch; }
     .m-panel { display: none; }
     .m-panel.is-visible { display: block; }
 
@@ -409,16 +412,17 @@
       display: flex; align-items: flex-start; gap: 0.65rem;
       background: var(--color-surface);
       border: 1px solid var(--color-border);
-      border-radius: 10px; padding: 0.75rem; margin-bottom: 0.55rem; position: relative;
+      border-radius: 10px; padding: 0.65rem; margin-bottom: 0.45rem; position: relative;
     }
     .m-task::before {
       content: "";
-      position: absolute; left: 8px; top: 10px; bottom: 10px; width: 3px; border-radius: 2px;
+      position: absolute; left: 8px; top: 9px; bottom: 9px; width: 3px; border-radius: 2px;
       background: var(--color-secondary);
     }
     .m-task-inner { margin-left: 8px; flex: 1; }
-    .m-task h4 { font-size: 0.88rem; }
-    .m-task p { font-size: 0.75rem; color: var(--color-text-muted); }
+    .m-task h4 { font-size: 0.78rem; }
+    .m-task p { font-size: 0.65rem; color: var(--color-text-muted); }
+    .m-task .chip { font-size: 0.6rem; }
     .m-task[role="button"] { cursor: pointer; }
     .m-task[role="button"]:focus-visible { outline: 2px solid var(--color-secondary); outline-offset: 2px; }
     .m-dots { display: flex; gap: 0.2rem; margin-top: 0.4rem; }
@@ -426,22 +430,25 @@
 
     .m-bottom {
       position: absolute; bottom: 0; left: 0; right: 0;
-      height: 72px; background: var(--color-surface);
+      height: 56px; background: var(--color-surface);
       border-top: 1px solid var(--color-border);
-      display: flex; align-items: center; justify-content: space-around; padding: 0 0.3rem;
+      display: flex; align-items: center; justify-content: space-around; padding: 0 0.25rem;
     }
-    .m-tab { flex: 1; text-align: center; padding: 0.4rem; cursor: pointer; color: var(--color-text-muted); font-size: 0.65rem; font-weight: 600; }
-    .m-tab i { display: block; margin: 0 auto 0.2rem; width: 22px; height: 22px; }
+    .m-tab { flex: 1; text-align: center; padding: 0.25rem; cursor: pointer; color: var(--color-text-muted); font-size: 0.55rem; font-weight: 600; }
+    .m-tab i { display: block; margin: 0 auto 0.1rem; width: 18px; height: 18px; }
     .m-tab.is-active { color: var(--color-primary); }
 
-    .m-history, .m-profile { font-size: 0.86rem; }
+    .m-history, .m-profile { font-size: 0.72rem; }
     .m-history-item, .m-profile-row {
-      padding: 0.6rem; background: var(--color-surface); border-radius: 8px; margin-bottom: 0.4rem; border: 1px solid var(--color-border);
+      padding: 0.5rem 0.6rem; background: var(--color-surface); border-radius: 8px; margin-bottom: 0.4rem; border: 1px solid var(--color-border);
     }
-
     .cat-tabs { display: flex; gap: 0.35rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-    .cat-tabs button { font-size: 0.72rem; padding: 0.35rem 0.7rem; border-radius: 999px; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted); cursor: pointer; }
+    .cat-tabs button { font-size: 0.62rem; padding: 0.6rem 0.4rem; border-radius: 999px; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted); cursor: pointer; }
     .cat-tabs button.is-active { background: rgba(183, 65, 14, 0.15); color: var(--color-primary); border-color: var(--color-primary); }
+    .phone .m-content h2 { font-size: 0.78rem; }
+    .phone #m-profile .team-av { width: 64px; height: 64px; font-size: 1.1rem; margin: 0 auto 0.5rem; border: 3px solid rgba(183, 65, 14, 0.35); }
+    .phone #m-profile h3 { font-size: 0.95rem; }
+    .phone #m-profile .m-profile-head { font-size: 0.6rem; color: var(--color-text-muted); }
   </style>
 </head>
 <body class="mode-mobile">
@@ -628,6 +635,7 @@
 
     <div class="mobile-shell" id="mobileShell">
       <div class="phone">
+        <div class="phone-notch" aria-hidden="true"><span></span></div>
         <div class="phone-screen">
           <div class="m-header" id="mHeader">
             <h1 id="mHeaderTitle">Görevler</h1>
@@ -644,7 +652,7 @@
               </div>
               <div class="m-task" data-cat="tarla" data-mtask="t1" data-task-id="t1" tabindex="0" role="button">
                 <div class="m-task-inner" style="width:100%">
-                  <h4>Patates 2. parsel — tırmık <span class="chip chip-s-yeni" style="font-size:0.65rem">Yeni</span></h4>
+                  <h4>Patates 2. parsel — tırmık <span class="chip chip-s-yeni">Yeni</span></h4>
                   <p>Tarla: Yonca-3 · Sorumlu: Ahmet Y. · 24 Nis 2026</p>
                   <div class="m-dots" aria-hidden="true">
                     <i data-lucide="circle" style="width:6px;height:6px"></i><i data-lucide="circle" style="width:6px;height:6px"></i><i data-lucide="circle" style="width:6px;height:6px"></i>
@@ -653,7 +661,7 @@
               </div>
               <div class="m-task" data-cat="tarla" data-mtask="t3" data-task-id="t3" tabindex="0" role="button">
                 <div class="m-task-inner" style="width:100%">
-                  <h4>Mısır hat 4 — çapa <span class="chip chip-s-devam" style="font-size:0.65rem">Devam</span></h4>
+                  <h4>Mısır hat 4 — çapa <span class="chip chip-s-devam">Devam</span></h4>
                   <p>Çeltik-1 / batı · Mehmet K. · 25 Nis 2026</p>
                   <div class="m-dots" aria-hidden="true">
                     <i data-lucide="circle" style="width:6px;height:6px"></i><i data-lucide="circle" style="width:6px;height:6px"></i>
@@ -662,21 +670,21 @@
               </div>
               <div class="m-task" data-cat="depo" data-mtask="t2" data-task-id="t2" tabindex="0" role="button">
                 <div class="m-task-inner" style="width:100%">
-                  <h4>Depo stok sayımı <span class="chip chip-s-yeni" style="font-size:0.65rem">Yeni</span></h4>
+                  <h4>Depo stok sayımı <span class="chip chip-s-yeni">Yeni</span></h4>
                   <p>Ana depo · Hasan D. · 28 Nis 2026</p>
                   <div class="m-dots" aria-hidden="true"><i data-lucide="circle" style="width:6px;height:6px"></i></div>
                 </div>
               </div>
               <div class="m-task" data-cat="bakim" data-mtask="t4" data-task-id="t4" tabindex="0" role="button">
                 <div class="m-task-inner" style="width:100%">
-                  <h4>5090E aylık bakım <span class="chip chip-s-tamam" style="font-size:0.65rem">Tamam</span></h4>
+                  <h4>5090E aylık bakım <span class="chip chip-s-tamam">Tamam</span></h4>
                   <p>Hangar · Orhan U. · 20 Nis 2026</p>
                 </div>
               </div>
             </div>
 
             <div class="m-panel" id="m-history">
-              <h2 style="font-size:0.85rem; margin-bottom:0.5rem; color:var(--color-text-muted)">Geçmiş</h2>
+              <h2 style="margin-bottom:0.5rem; color:var(--color-text-muted)">Geçmiş</h2>
               <div class="m-history">
                 <div class="m-history-item">22 Nis — "Buğday A" azot uygulaması kayıt: 42,5 ha.</div>
                 <div class="m-history-item">21 Nis — Yonca-3: biçim-1, verim: 1.2 t/ha (özet).</div>
@@ -685,16 +693,16 @@
             </div>
 
             <div class="m-panel" id="m-issue">
-              <h2 style="font-size:0.85rem; margin-bottom:0.5rem; color:var(--color-text-muted)">Sorunlar (saha)</h2>
+              <h2 style="margin-bottom:0.5rem; color:var(--color-text-muted)">Sorunlar (saha)</h2>
               <div class="m-task" data-cat="main">
                 <div class="m-task-inner" style="width:100%">
-                  <h4>Basınç düşüklüğü — hat-2 <span class="chip chip-p-yuksek" style="font-size:0.6rem">Açık</span></h4>
+                  <h4>Basınç düşüklüğü — hat-2 <span class="chip chip-p-yuksek">Açık</span></h4>
                   <p>Yonca-3 yakın · en son: 09:00</p>
                 </div>
               </div>
               <div class="m-task" data-cat="main">
                 <div class="m-task-inner" style="width:100%">
-                  <h4>5090E yağ sızıntısı şüphesi <span class="chip chip-s-devam" style="font-size:0.6rem">İnceleniyor</span></h4>
+                  <h4>5090E yağ sızıntısı şüphesi <span class="chip chip-s-devam">İnceleniyor</span></h4>
                   <p>Hangar B · en son: dün 16:00</p>
                 </div>
               </div>
@@ -702,9 +710,9 @@
 
             <div class="m-panel" id="m-profile">
               <div class="m-profile" style="text-align:center; padding:0.5rem 0 1rem">
-                <div class="team-av" style="width:64px; height:64px; font-size:1.25rem; margin:0 auto 0.5rem">MK</div>
-                <h3 style="font-size:1rem">Mehmet Kaya</h3>
-                <p style="color:var(--color-text-muted); font-size:0.8rem">Saha operatörü — Çumra (demo)</p>
+                <div class="team-av">MK</div>
+                <h3>Mehmet Kaya</h3>
+                <p class="m-profile-head">Saha operatörü — Çumra (demo)</p>
               </div>
               <div class="m-profile-row"><strong>Telefon</strong> — +90 33X XXX XX XX</div>
               <div class="m-profile-row"><strong>Çalıştığı alan</strong> — mısır, baklagiller, çapa</div>

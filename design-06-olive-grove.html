@@ -305,48 +305,63 @@
     .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
 
     /* ——— Mobile shell ——— */
-    .mobile-view { display: none; justify-content: center; padding: 1.5rem 1rem 2rem; min-height: calc(100vh - 57px); background: var(--surface-2); }
+    .mobile-view { display: none; justify-content: center; padding: 1rem 1rem 1.5rem; min-height: calc(100vh - 57px); background: var(--surface-2); }
     .mobile-view[data-active="true"] { display: flex; }
     .phone-frame {
-      width: 100%; max-width: 390px; background: var(--bg);
-      border-radius: 28px; border: 1px solid var(--border);
-      box-shadow: 0 24px 48px rgba(45, 43, 38, 0.12), 0 0 0 1px rgba(255,255,255,0.5) inset;
-      overflow: hidden; display: flex; flex-direction: column; min-height: 720px; max-height: 92vh;
+      width: 100%; max-width: 320px; background: var(--bg);
+      border-radius: 24px; border: 1px solid var(--border);
+      box-shadow: 0 16px 36px rgba(45, 43, 38, 0.1), 0 0 0 1px rgba(255,255,255,0.5) inset;
+      overflow: hidden; display: flex; flex-direction: column; min-height: 540px; max-height: min(70vh, 640px);
     }
-    .phone-notch { height: 28px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--text-muted); }
-    .phone-body { flex: 1; overflow: auto; position: relative; }
+    .phone-notch {
+      height: 20px; background: var(--bg); display: flex; align-items: center; justify-content: center;
+      font-size: 0; color: transparent; position: relative; flex-shrink: 0;
+    }
+    .phone-notch::before {
+      content: "";
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px; height: 20px;
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--text) 22%, var(--bg));
+    }
+    .phone-body { flex: 1; overflow: auto; position: relative; min-height: 0; }
     .phone-bottom {
-      height: 72px; flex-shrink: 0;
+      height: 56px; flex-shrink: 0;
       display: flex; border-top: 1px solid var(--border);
       background: var(--surface);
     }
     .phone-bottom button {
-      flex: 1; border: none; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-      font-size: 0.6rem; font-weight: 600; color: var(--text-muted); cursor: pointer; padding: 0.25rem;
+      flex: 1; border: none; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+      font-size: 0.55rem; font-weight: 600; color: var(--text-muted); cursor: pointer; padding: 0.2rem;
     }
     .phone-bottom button[aria-selected="true"] { color: var(--primary); background: color-mix(in srgb, var(--primary) 6%, var(--surface)); }
-    .phone-bottom svg { width: 22px; height: 22px; }
+    .phone-bottom svg { width: 18px; height: 18px; }
 
-    .m-screen { display: none; padding: 1rem; padding-bottom: 0.5rem; }
+    .m-screen { display: none; padding: 0.6rem; padding-bottom: 72px; }
     .m-screen[data-visible="true"] { display: block; }
 
-    .m-title { font-size: 1.35rem; margin-bottom: 0.2rem; }
-    .m-sub { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; }
+    .m-title { font-size: 0.9rem; margin-bottom: 0.15rem; }
+    .m-sub { font-size: 0.6rem; color: var(--text-secondary); margin-bottom: 0.75rem; }
 
     .m-task-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 0.9rem 1rem; margin-bottom: 0.65rem;
+      padding: 0.65rem; margin-bottom: 0.45rem;
       border-left: 3px solid var(--primary);
     }
-    .m-task-card h4 { font-size: 1rem; font-family: var(--font-serif); margin-bottom: 0.3rem; }
+    .m-task-card h4 { font-size: 0.78rem; font-family: var(--font-serif); margin-bottom: 0.25rem; }
+    .m-task-card p { font-size: 0.65rem !important; }
+    .m-task-card .tag { font-size: 0.6rem; }
 
-    .m-actions { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1.25rem; }
+    .m-actions { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
     .m-btn {
-      width: 100%; height: 72px; border-radius: 999px; border: none; font: inherit; font-weight: 700; font-size: 0.95rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; transition: filter 0.15s;
+      width: 100%; height: 56px; border-radius: 999px; border: none; font: inherit; font-weight: 700; font-size: 0.85rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.35rem; transition: filter 0.15s;
     }
+    .m-btn svg, .m-btn [data-lucide] { width: 18px; height: 18px; }
     .m-btn.start { background: var(--primary); color: #fff; }
     .m-btn.done { background: var(--surface); color: var(--primary); border: 2px solid var(--primary); }
     .m-btn:hover { filter: brightness(1.02); }
@@ -354,26 +369,28 @@
     .history-group { margin-bottom: 1.25rem; }
     .history-group h3 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem; }
     .history-item {
-      display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0; border-bottom: 1px solid var(--border);
-      font-size: 0.875rem;
+      display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border);
+      font-size: 0.72rem;
     }
-    .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.45rem; }
     .cat-btn {
-      padding: 0.85rem; border-radius: var(--radius); border: 1px solid var(--border);
-      background: var(--surface); text-align: center; font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--text);
+      padding: 0.6rem 0.4rem; border-radius: var(--radius); border: 1px solid var(--border);
+      background: var(--surface); text-align: center; font-size: 0.62rem; font-weight: 600; cursor: pointer; color: var(--text);
     }
     .cat-btn:hover, .cat-btn[aria-pressed="true"] {
       border-color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, var(--surface)); color: var(--primary);
     }
+    .m-screen[data-m="m2"] h2.serif { font-size: 0.95rem !important; }
+    .m-screen[data-m="m2"] .m-sub { font-size: 0.6rem !important; }
     .profile-hero {
-      text-align: center; padding: 0.5rem 0 1.25rem;
+      text-align: center; padding: 0.4rem 0 1rem;
     }
     .profile-hero .big-av {
-      width: 88px; height: 88px; border-radius: 50%; margin: 0 auto 0.6rem; background: var(--surface-2);
-      display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-family: var(--font-serif);
+      width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 0.5rem; background: var(--surface-2);
+      display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-family: var(--font-serif);
       color: var(--primary); border: 3px solid var(--accent);
     }
-    .profile-hero h2 { font-size: 1.35rem; }
+    .profile-hero h2 { font-size: 0.95rem; }
     .profile-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
     .profile-list button {
       display: flex; width: 100%; align-items: center; justify-content: space-between; padding: 0.9rem 1rem;
@@ -724,7 +741,7 @@
   <!-- ——— Mobile / Worker ——— -->
   <div class="mobile-view" data-active="true" id="mobileView">
     <div class="phone-frame" id="phoneFrame">
-      <div class="phone-notch">Agrova · İşçi</div>
+      <div class="phone-notch" role="img" aria-label="Agrova · İşçi"></div>
       <div class="phone-body" id="phoneBody">
         <!-- m1 Görevler -->
         <div class="m-screen" data-m="m1" data-visible="true">

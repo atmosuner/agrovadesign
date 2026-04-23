@@ -22,8 +22,8 @@
       --c-gold-grad: linear-gradient(135deg, #C9A84C 0%, #A07830 50%, #E8D5A3 100%);
       --ease: 0.2s ease;
       --sidebar-w: 244px;
-      --phone-max: 390px;
-      --tab-h: 72px;
+      --phone-max: 320px;
+      --tab-h: 56px;
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -49,7 +49,7 @@
     /* —— Main stage —— */
     .stage { flex: 1; display: flex; justify-content: center; padding: 20px; }
     .stage--desktop { display: flex; }
-    .stage--mobile { display: none; align-items: flex-start; padding-top: 32px; }
+    .stage--mobile { display: none; align-items: flex-start; padding: 1rem 1rem 1.5rem; }
     body.view-mobile .stage--desktop { display: none; }
     body.view-mobile .stage--mobile { display: flex; }
     /* —— Desktop layout —— */
@@ -234,25 +234,29 @@
       width: 100%;
       background: #080808;
       border: 2px solid rgba(201, 168, 76, 0.35);
-      border-radius: 32px;
+      border-radius: 30px;
       box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.15), 0 32px 80px rgba(0, 0, 0, 0.6);
       overflow: hidden;
-      min-height: 720px;
+      min-height: 0;
+      max-height: min(90vh, 700px);
+      padding: 8px;
       display: flex; flex-direction: column;
     }
     .phone__notch {
-      height: 28px; background: #0a0a0a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      height: 20px; background: #0a0a0a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .phone__notch-pill { width: 100px; height: 24px; background: #121212; border-radius: 12px; }
+    .phone__notch-pill { width: 72px; height: 20px; background: #121212; border-radius: 10px; }
     .phone__header {
-      min-height: 56px; padding: 0 16px;
+      min-height: 0; padding: 0.65rem 0.75rem;
       display: flex; align-items: center; justify-content: space-between;
       background: linear-gradient(180deg, rgba(201, 168, 76, 0.15) 0%, transparent 100%);
       border-bottom: 1px solid var(--c-border);
     }
-    .phone__title { font-size: 17px; font-weight: 700; color: var(--c-accent); }
+    .phone__title { font-size: 0.9rem; font-weight: 700; color: var(--c-accent); }
     .phone__content {
-      flex: 1; overflow: auto; padding: 16px; padding-bottom: 8px;
+      flex: 1 1 auto; overflow: auto; min-height: 0;
+      max-height: min(70vh, 640px);
+      padding: 0.6rem; padding-bottom: 72px;
     }
     .phone__tabs {
       height: var(--tab-h);
@@ -263,33 +267,34 @@
     .phone__tab {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
       color: var(--c-muted);
-      font-size: 10px; font-weight: 500;
+      font-size: 0.55rem; font-weight: 500;
       border-top: 2px solid transparent; margin-top: -1px;
       transition: all var(--ease);
     }
-    .phone__tab i { width: 22px; height: 22px; }
+    .phone__tab i { width: 18px; height: 18px; }
     .phone__tab.is-active { color: var(--c-primary); border-top-color: var(--c-primary); background: rgba(201, 168, 76, 0.06); }
     .m-panel { display: none; }
     .m-panel.is-visible { display: block; animation: fadeIn var(--ease); }
     .task-card {
       background: #1A1A1A; border: 1px solid var(--c-border);
-      border-radius: 10px; padding: 14px; margin-bottom: 10px; cursor: pointer;
+      border-radius: 10px; padding: 0.65rem; margin-bottom: 0.45rem; cursor: pointer;
       border-left: 3px solid var(--c-primary);
       transition: all var(--ease);
     }
     .task-card:hover { background: rgba(201, 168, 76, 0.07); border-color: rgba(201, 168, 76, 0.35); }
-    .task-card__type { color: var(--c-primary); font-size: 12px; font-weight: 600; }
-    .task-card__field { color: var(--c-text); font-size: 15px; font-weight: 600; margin-top: 4px; }
-    .task-card__meta { color: var(--c-muted); font-size: 12px; margin-top: 8px; }
+    .task-card__type { color: var(--c-primary); font-size: 0.78rem; font-weight: 600; }
+    .task-card__field { color: var(--c-text); font-size: 0.65rem; font-weight: 600; margin-top: 4px; }
+    .task-card__meta { color: var(--c-muted); font-size: 0.6rem; margin-top: 8px; }
     .m-detail { display: none; flex-direction: column; gap: 16px; }
     .m-detail.is-visible { display: flex; }
     .m-list-view.is-hidden { display: none; }
     .m-header-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
     .m-back { display: flex; align-items: center; gap: 6px; color: var(--c-primary); font-size: 14px; font-weight: 500; }
-    .m-detail__title { font-size: 20px; color: var(--c-accent); }
+    .m-detail__title { font-size: 0.95rem; color: var(--c-accent); }
+    #mDetailBody { font-size: 0.75rem; line-height: 1.5; }
     .m-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
     .btn-pill {
-      height: 48px; border-radius: 999px; font-weight: 600; font-size: 15px;
+      min-height: 56px; height: 56px; border-radius: 999px; font-weight: 600; font-size: 0.85rem;
       display: flex; align-items: center; justify-content: center;
       transition: all var(--ease);
     }
@@ -302,11 +307,15 @@
     .m-heading { font-size: 13px; color: var(--c-muted); margin: 20px 0 10px; }
     .m-heading:first-child { margin-top: 0; }
     .history-block { margin-bottom: 16px; }
-    .history-date { font-size: 12px; color: var(--c-primary); font-weight: 600; margin-bottom: 8px; }
+    .history-date { font-size: 0.72rem; color: var(--c-primary); font-weight: 600; margin-bottom: 8px; }
+    .history-block .task-card { padding: 0.5rem 0.6rem; }
+    .history-block .task-card__type,
+    .history-block .task-card__field,
+    .history-block .task-card__meta { font-size: 0.72rem; }
     .report-cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
     .cat-btn {
-      padding: 12px; border-radius: 10px; border: 1px solid var(--c-border);
-      background: #151515; text-align: center; font-size: 12px; color: var(--c-muted);
+      padding: 0.6rem 0.4rem; border-radius: 10px; border: 1px solid var(--c-border);
+      background: #151515; text-align: center; font-size: 0.62rem; color: var(--c-muted);
       transition: all var(--ease);
     }
     .cat-btn.is-selected, .cat-btn:hover {
@@ -316,19 +325,21 @@
     }
     .profile-top { text-align: center; padding: 8px 0 20px; }
     .profile-av {
-      width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 20px;
+      width: 64px; height: 64px; margin: 0 auto 12px; border-radius: 18px;
       background: var(--c-gold-grad);
       color: #0D0D0D; font-size: 24px; font-weight: 800; display: flex; align-items: center; justify-content: center;
-      border: 2px solid rgba(201, 168, 76, 0.5);
+      border: 3px solid rgba(201, 168, 76, 0.5);
     }
-    .profile-name { color: var(--c-accent); font-size: 18px; font-weight: 700; }
-    .profile-job { color: var(--c-muted); font-size: 13px; margin-top: 4px; }
+    .profile-name { color: var(--c-accent); font-size: 0.9rem; font-weight: 700; }
+    .profile-job { color: var(--c-muted); font-size: 0.6rem; margin-top: 4px; }
     .info-rows { display: flex; flex-direction: column; gap: 0; }
     .info-row {
-      display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--c-border);
-      font-size: 13px;
+      display: flex; justify-content: space-between; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--c-border);
+      font-size: 0.72rem;
     }
     .info-row span:first-child { color: var(--c-muted); }
+    .phone__content .textarea { min-height: 70px; font-size: 0.75rem; }
+    .phone__content .btn-gold#reportSubmit { min-height: 56px; font-size: 0.85rem; }
 
     .sidebar { transition: width 0.25s ease; overflow: hidden; }
     .sidebar.is-collapsed { width: 64px; }
@@ -702,8 +713,8 @@
                 Elma Bahçesi A3 — sıra 2–4. Alet kontrol listesi ve güvenlik bariyeri zorunlu. Atanan: Hüseyin Demir.
               </p>
               <div class="m-actions">
-                <button type="button" class="btn-pill btn-pill--primary" id="mBtnStart" style="height:72px">İşe Başla</button>
-                <button type="button" class="btn-pill btn-pill--secondary" id="mBtnDone" style="height:72px">Tamamla</button>
+                <button type="button" class="btn-pill btn-pill--primary" id="mBtnStart">İşe Başla</button>
+                <button type="button" class="btn-pill btn-pill--secondary" id="mBtnDone">Tamamla</button>
               </div>
             </div>
           </div>

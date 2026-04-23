@@ -723,51 +723,53 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 16px 12px 0;
+      padding: 1rem 1rem 1.5rem;
       background: #060908;
     }
 
     .phone-frame {
       width: 100%;
-      max-width: 390px;
-      min-height: 720px;
+      max-width: 320px;
+      min-height: 540px;
+      max-height: min(70vh, 640px);
       background: var(--color-bg);
       border: 3px solid #2a3330;
-      border-radius: 32px;
-      box-shadow: 0 0 0 1px var(--color-border), 0 24px 80px rgba(0,0,0,0.5);
+      border-radius: 26px;
+      box-shadow: 0 0 0 1px var(--color-border), 0 18px 56px rgba(0,0,0,0.45);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
     .notch {
-      height: 28px;
+      height: 20px;
       display: flex;
       justify-content: center;
-      padding-top: 8px;
+      align-items: flex-end;
+      padding-bottom: 4px;
     }
 
     .notch-bar {
-      width: 100px;
-      height: 24px;
+      width: 72px;
+      height: 20px;
       background: #1a1f1c;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
     .m-header {
-      padding: 8px 16px 4px;
-      font-size: 1.1rem;
+      padding: 0.65rem 0.75rem 0.35rem;
+      font-size: 0.9rem;
       font-weight: 700;
     }
 
     .m-content {
       flex: 1;
       overflow: auto;
-      padding: 12px 16px 8px;
+      padding: 0.6rem 0.6rem 72px;
     }
 
     .m-bottom {
-      height: 72px;
+      height: 56px;
       flex-shrink: 0;
       display: flex;
       border-top: 1px solid var(--color-border);
@@ -781,16 +783,17 @@
       align-items: center;
       justify-content: center;
       gap: 2px;
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       color: var(--text-muted);
       cursor: pointer;
       border: none;
       background: none;
       font-family: var(--font);
+      padding: 0.25rem;
     }
 
     .m-tab i,
-    .m-tab svg { width: 22px; height: 22px; }
+    .m-tab svg { width: 18px; height: 18px; }
 
     .m-tab.is-active {
       color: var(--color-primary);
@@ -806,24 +809,29 @@
     .m-card {
       background: var(--color-surface-1);
       border: 1px solid var(--color-border);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
+      border-radius: 10px;
+      padding: 0.65rem;
+      margin-bottom: 0.45rem;
     }
 
-    .m-card h4 { font-size: 0.9rem; margin-bottom: 4px; }
-    .m-card p { font-size: 0.75rem; color: var(--text-secondary); }
+    .m-card h4 { font-size: 0.78rem; margin-bottom: 4px; }
+    .m-card p { font-size: 0.65rem; color: var(--text-secondary); margin-top: 0.4rem; }
+    .m-card p:first-of-type { margin-top: 0; }
 
     .m-pill {
       width: 100%;
-      height: 72px;
+      height: 56px;
       border-radius: var(--radius-pill);
       border: none;
       font-family: var(--font);
       font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
     }
 
     .m-pill-primary {
@@ -839,11 +847,13 @@
     }
 
     .m-detail-meta {
-      font-size: 0.8rem;
+      font-size: 0.65rem;
       color: var(--text-secondary);
-      margin: 8px 0 16px;
+      margin: 8px 0 12px;
     }
 
+    .view-mobile #m-detail .panel-title { font-size: 0.95rem !important; }
+    .view-mobile #m-detail #detail-desc { font-size: 0.75rem !important; }
     .m-back {
       background: none;
       border: none;
@@ -860,17 +870,22 @@
     .cat-btn {
       width: 100%;
       text-align: left;
-      padding: 14px 16px;
+      padding: 0.6rem 0.4rem;
       background: var(--color-surface-1);
       border: 1px solid var(--color-border);
       border-radius: 10px;
       color: var(--text-primary);
       font-family: var(--font);
+      font-size: 0.62rem;
       margin-bottom: 8px;
       cursor: pointer;
     }
+    .view-mobile .cat-btn i,
+    .view-mobile .cat-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
     .cat-btn:hover { border-color: var(--color-border-hover); }
+
+    .view-mobile #m-profile .avatar { width: 64px !important; height: 64px !important; font-size: 1.15rem !important; }
 
     .empty-state {
       text-align: center;

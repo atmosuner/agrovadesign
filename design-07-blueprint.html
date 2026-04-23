@@ -28,7 +28,7 @@
       --font: "Inter", system-ui, sans-serif;
       --mono: "JetBrains Mono", ui-monospace, monospace;
       --sidebar-w: 240px;
-      --tab-h: 72px;
+      --tab-h: 56px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -499,40 +499,55 @@
     .mobile-wrap {
       display: flex;
       justify-content: center;
-      padding: 24px 16px 40px;
+      padding: 1rem 1rem 1.5rem;
       min-height: calc(100vh - 56px);
     }
     .phone {
       width: 100%;
-      max-width: 390px;
-      min-height: 720px;
+      max-width: 320px;
+      min-height: 540px;
+      max-height: min(70vh, 640px);
       background: var(--surface);
       border: 2px solid var(--primary);
-      border-radius: var(--radius);
+      border-radius: 24px;
       box-shadow:
         0 0 0 1px var(--border),
-        8px 16px 40px rgba(30, 64, 175, 0.12);
+        6px 12px 28px rgba(30, 64, 175, 0.1);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
     .phone-notch {
-      height: 28px;
+      height: 20px;
       background: var(--surface-1);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--text-muted);
+      font-size: 0;
+      color: transparent;
       letter-spacing: 0.15em;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .phone-notch::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px;
+      height: 20px;
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--text) 25%, var(--surface-1));
     }
     .phone-content {
       flex: 1;
       overflow-y: auto;
-      padding: 16px;
-      padding-bottom: 0;
+      min-height: 0;
+      padding: 0.6rem;
+      padding-bottom: 72px;
       background: var(--bg);
       background-image:
         linear-gradient(var(--grid-line) 1px, transparent 1px),
@@ -546,74 +561,78 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      padding: 0.65rem 0;
     }
-    .mobile-header h1 { font-size: 1.15rem; font-weight: 700; }
-    .mobile-header .sub { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); }
+    .mobile-header h1 { font-size: 0.9rem; font-weight: 700; }
+    .mobile-header .sub { font-family: var(--mono); font-size: 0.6rem; color: var(--text-muted); }
 
     .m-task-card {
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 14px;
-      margin-bottom: 10px;
+      padding: 0.65rem;
+      margin-bottom: 0.45rem;
       background: var(--surface);
       border-left: 3px solid var(--primary);
     }
-    .m-task-card h3 { font-size: 0.92rem; margin-bottom: 6px; }
-    .m-task-card .row { font-family: var(--mono); font-size: 0.75rem; color: var(--text-sec); display: flex; justify-content: space-between; margin-top: 4px; }
+    .m-task-card h3 { font-size: 0.78rem; margin-bottom: 4px; }
+    .m-task-card .row { font-family: var(--mono); color: var(--text-sec); display: flex; justify-content: space-between; margin-top: 3px; }
+    .m-task-card .row:first-of-type { font-size: 0.65rem; }
+    .m-task-card .row + .row { font-size: 0.6rem; }
 
     .m-detail-block {
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 14px;
+      padding: 0.65rem;
       background: var(--surface);
-      margin-bottom: 12px;
-      font-size: 0.85rem;
+      margin-bottom: 10px;
+      font-size: 0.75rem;
     }
-    .m-detail-block .k { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 4px; }
+    .m-detail-block .k { font-family: var(--mono); font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 3px; }
 
     .btn-pill {
       width: 100%;
-      height: 72px;
+      height: 56px;
       border-radius: 999px;
       border: none;
       background: var(--primary);
       color: #fff;
       font-family: var(--font);
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.85rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 8px;
       box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
     }
+    .btn-pill .lucide, .btn-pill [data-lucide], .btn-pill svg { width: 18px; height: 18px; }
     .btn-pill.secondary { background: var(--surface); color: var(--primary); border: 2px solid var(--primary); box-shadow: none; }
 
     .history-row {
       display: grid;
-      grid-template-columns: 72px 1fr;
-      gap: 10px;
-      padding: 12px;
+      grid-template-columns: 64px 1fr;
+      gap: 8px;
+      padding: 0.5rem 0.6rem;
       border-bottom: 1px solid var(--border);
-      font-size: 0.82rem;
+      font-size: 0.72rem;
       background: var(--surface);
     }
-    .history-row .d { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); }
+    .history-row .d { font-family: var(--mono); font-size: 0.6rem; color: var(--text-muted); }
 
     .cat-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
     .cat-item {
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 12px;
+      padding: 0.6rem 0.4rem;
       text-align: center;
-      font-size: 0.8rem;
+      font-size: 0.62rem;
       font-weight: 600;
       background: var(--surface);
       cursor: pointer;
@@ -624,21 +643,21 @@
     .profile-tech {
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 1rem;
       background: var(--surface);
       text-align: center;
     }
     .profile-tech .big-av {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 12px;
-      border: 2px solid var(--primary);
-      border-radius: var(--radius);
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 10px;
+      border: 3px solid var(--primary);
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--mono);
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--primary);
       background: var(--surface-1);
@@ -668,21 +687,29 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      font-size: 0.62rem;
+      gap: 2px;
+      font-size: 0.55rem;
       font-weight: 600;
       color: var(--text-muted);
       cursor: pointer;
       font-family: var(--font);
       border-top: 3px solid transparent;
-      padding-top: 3px;
+      padding-top: 2px;
     }
     .bottom-tabs button.active {
       color: var(--primary);
       border-top-color: var(--primary);
       background: rgba(30, 64, 175, 0.04);
     }
-    .bottom-tabs .lucide { width: 22px; height: 22px; }
+    .bottom-tabs .lucide { width: 18px; height: 18px; }
+
+    .phone-content #m-screen-report textarea {
+      min-height: 70px !important;
+      font-size: 0.75rem !important;
+      padding: 0.5rem !important;
+      width: 100% !important;
+    }
+    #m-screen-detail h2 { font-size: 0.95rem !important; }
 
     .task-list-click { cursor: pointer; }
   </style>
@@ -1044,7 +1071,7 @@
   <!-- MOBILE -->
   <div id="mobile-root" class="mobile-wrap">
     <div class="phone">
-      <div class="phone-notch">AGROVA — İŞÇİ UÇ</div>
+      <div class="phone-notch" role="img" aria-label="AGROVA — İŞÇİ UÇ"></div>
       <div class="phone-content">
         <div id="m-screen-tasks" class="phone-screen active">
           <div class="mobile-header">
